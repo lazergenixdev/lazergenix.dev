@@ -1,0 +1,6 @@
+*.json
+*.min.js
+*.wasm
+*.exe
+*.wgsl
+*.temp.html
