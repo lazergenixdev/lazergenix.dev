@@ -54,10 +54,8 @@ let c = null; // Exported WASM Functions
 let scratch_page = 0;
 
 function resizeToParent() {
-	const parent = canvas.parentElement;
-	if (!parent) return;
-	canvas.width = parent.clientWidth;
-	canvas.height = parent.clientHeight;
+	canvas.width = canvas.clientWidth;
+	canvas.height = canvas.clientHeight;
 	state |= 1;
 }
 

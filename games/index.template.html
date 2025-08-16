@@ -7,10 +7,6 @@
 	<link rel="icon"
 		href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>@@icon@@</text></svg>">
 	<title>@@title@@</title>
-	<link rel="preload" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/woff2/FiraCode-Regular.woff2" as="font"
-		type="font/woff2" crossorigin>
-	<link rel="preload" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/woff2/FiraCode-Bold.woff2" as="font"
-		type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
 	<style>
 		html,
@@ -36,10 +32,14 @@
 		}
 
 		a {
-			color: white;
+			color: #FFF;
 		}
 
-		#mainContainer {
+		a:hover {
+			color: #929292;
+		}
+
+		canvas {
 			display: flex;
 			flex: 1;
 		}
@@ -55,9 +55,9 @@
 
 <body>
 	<header>
-		<h1><a href="/">lazergenix.dev</a></h1>
+		<h1><a href="/">lazergenix.dev</a> / <a href="/games/">Games</a></h1>
 	</header>
-	<div id="mainContainer"><canvas id="main"></canvas></div>
+	<canvas id="main"></canvas>
 	<footer>Copyright (c) 2025 lazergenixdev</footer>
 	<script type="module">"use strict";const shaders={@@shaders@@};@@code@@</script>
 </body>

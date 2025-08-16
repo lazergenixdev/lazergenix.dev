@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=0.5">
+	<link rel="icon"
+		href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
+	<title>About - lazergenix.dev</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
+	<style>
+		body {
+			background-color: black;
+			color: #FFF;
+			margin: 0;
+			font-family: 'Fira Code', monospace;
+			font-optical-sizing: auto;
+			font-weight: 400;
+			font-style: normal;
+		}
+
+		header {
+			text-align: center;
+		}
+		
+		main {
+			max-width: 700px;
+			margin: 40px auto 0 auto;
+			padding: 0 1rem;
+		}
+
+		#topbar {
+			display: flex;
+			gap: 1em;
+			justify-content: center;
+		}
+
+		a {
+			color: white;
+		}
+
+		h1 a:hover {
+			color: #929292;
+		}
+
+		#topbar a {
+			text-decoration: none;
+			position: relative;
+			padding: 10px 20px;
+			font-size: 16px;
+			font-weight: bold;
+			border: none;
+			cursor: pointer;
+			overflow: hidden;
+		}
+
+		#topbar a::after {
+			content: "";
+			background: white;
+			/* Bar color */
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			height: 3px;
+			/* Bar thickness */
+			width: 0%;
+			transition: width 0.3s ease;
+		}
+
+		#topbar a:hover::after {
+			width: 100%;
+		}
+
+		section {
+			padding: 1em;
+		}
+
+		section h1 {
+			font-size: xx-large;
+		}
+
+		footer {
+			color: gray;
+			text-align: center;
+			margin-top: 100px;
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1><a href="/">lazergenix.dev</a> / About</h1>
+
+		<div id="topbar">
+			<a href="/blog/">Blog</a>
+			<a href="/projects/">Projects</a>
+			<a href="/games/">Games</a>
+		</div>
+	</header>
+
+	<section id="blog">
+		<h1>-> Blog</h1>
+		<div id="blog-container">
+			<span style="color:#AAA">... Nothing to show</span>
+		</div>
+	</section>
+
+	<section id="about">
+		<h1>-> About</h1>
+		Hello! I'm an incoming graduate student with a interest in computer graphics.
+	</section>
+
+	<section id="links">
+		<h1>-> Links</h1>
+		<p><b>Github</b>: <a href="https://github.com/lazergenixdev">github.com/lazergenixdev</a></p>
+		<!--<p><b>LinkedIn</b>: <a href="linkedin.com/in/">linkedin.com/in/</a></p>-->
+	</section>
+
+	<section id="contact">
+		<h1>-> Contact</h1>
+		<p><b>Email</b>: <a href="mailto:contact@lazergenix.dev">contact@lazergenix.dev</a></p>
+		<p><b>Discord</b>: <a>lazergenix</a></p>
+	</section>
+
+	<footer>
+		Copyright (c) 2025 lazergenixdev
+	</footer>
+</body>
+
+</html>

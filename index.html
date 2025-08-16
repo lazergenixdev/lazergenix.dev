@@ -20,6 +20,12 @@
       header {
         text-align: center;
       }
+	  
+		main {
+			max-width: 700px;
+			margin: 40px auto 0 auto;
+			padding: 0 1rem;
+		}
 
       #topbar {
         display: flex;
@@ -57,80 +63,6 @@
         width: 100%;
       }
 
-      section {
-        padding: 1em;
-      }
-
-      section h1 {
-        font-size: xx-large;
-      }
-
-      #blog-container {
-        display: flex;
-      }
-
-      .projects-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-      }
-
-      .project-card {
-        position: relative;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        overflow: hidden;
-        text-decoration: none;
-        color: inherit;
-      }
-
-      /* Border layer always exists, but starts clipped */
-      .project-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border: 3px solid #FFF;
-        clip-path: polygon(0 0, 0 0, 0 0); /* fully hidden */
-        transition: clip-path 0.5s ease;
-        pointer-events: none;
-      }
-
-      .project-card:hover::before {
-        clip-path: polygon(0 0, 300% 0, 0 300%); /* fully shown */
-      }
-
-      .project-card img {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
-      }
-
-      .project-card .content {
-        padding: 15px;
-      }
-
-      .project-card h3 {
-        margin: 0 0 10px;
-      }
-
-      .project-card p {
-        color: #555;
-        font-size: 14px;
-      }
-
-      /* View All special card */
-      .view-all {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        font-weight: bold;
-        background: #222;
-        color: white;
-        height: 100%;
-        text-align: center;
-        padding: 10px;
-      }
-
       footer {
         color: gray;
         text-align: center;
@@ -141,78 +73,40 @@
   </head>
   <body>
     <header>
-      <h1>lazergenix.dev</h1>
+		<h1>lazergenix.dev</h1>
+
+		<div id="topbar">
+			<a href="/blog/">Blog</a>
+			<a href="/projects/">Projects</a>
+			<a href="/games/">Games</a>
+			<a href="/about/">About</a>
+		</div>
     </header>
 
-    <div id="topbar">
-        <a href="#blog">Blog</a>
-        <a href="/projects/">Projects</a>
-        <a href="/games/">Games</a>
-        <a href="#about">About</a>
-    </div>
-
-	<h1 style="text-align: center;">🚧 WIP 🚧</h1>
-	<!--
-    <section id="blog">
-      <h1>-> Blog</h1>
-      <div id="blog-container">
-        <span style="color:#AAA">... Nothing to show</span>
-      </div>
-    </section>
-    
-    <section id="projects">
-      <h1>-> Projects</h1>
-
-      <div class="projects-container">
-        <a href="https://mbizzigotti.github.io/cse168-showcase/final-project" class="project-card">
-          <img src="/data/images/thumb-pathtracer.jpg" alt="Optix Path Tracer">
-          <div class="content">
-            <h3>Optix Path Tracer</h3>
-            <p>A real-time path tracer written using NVIDIA Optix</p>
-          </div>
-        </a>
-        
-        <a href="https://github.com/lazergenixdev/First-Voxel-Engine/tree/lod" class="project-card">
-          <img src="/data/images/thumb-voxelengine.jpg" alt="Project 2">
-          <div class="content">
-            <h3>Voxel Rendering</h3>
-            <p>Voxel rendering engine, multi-threaded, written in C++/Vulkan</p>
-          </div>
-        </a>
-        
-        <a href="https://github.com/lazergenixdev/kai-compiler" class="project-card">
-          <img src="/data/images/thumb-kailang.svg" alt="Project 3">
-          <div class="content">
-            <h3>Kai Compiler</h3>
-            <p>Header only scripting language compiler written in C</p>
-          </div>
-        </a>
-        
-        <a href="/projects/" class="project-card view-all">
-          View All ->
-        </a>
-      </div>
-    </section>
-
-    <section id="about">
-      <h1>-> About</h1>
-      Hello! I'm an incoming graduate student with a interest in computer graphics.
-    </section>
-
-    <section id="links">
-      <h1>-> Links</h1>
-      <p><b>Github</b>: <a href="https://github.com/lazergenixdev">github.com/lazergenixdev</a></p>
-    </section>
-	
-    <section id="contact">
-		<h1>-> Contact</h1>
-		<p><b>Email</b>: <a href="mailto:contact@lazergenix.dev">contact@lazergenix.dev</a></p>
-		<p><b>Discord</b>: <a>lazergenix</a></p>
-    </section>
-	-->
+	<main>
+		<h1 style="text-align: center;">🚧 WIP 🚧</h1>
+	</main>
 
     <footer>
-      Copyright (c) 2025 lazergenixdev
     </footer>
+
+	<script type="module">
+		"use strict";
+
+		const footer = document.querySelector("footer");
+		footer.innerText = localStorage.getItem("last_updated_date");
+		const url = "https://api.github.com/repos/lazergenixdev/lazergenix.dev/commits?per_page=1";
+		const response = await fetch(url, { headers: {"Accept": "application/vnd.github+json"} });
+
+		if (!response.ok) {
+			throw Error(`fetching commits: ${response.status}`);
+		}
+
+		const commit_data = await response.json();
+		const date = new Date(commit_data[0].commit.author.date);
+
+		footer.innerText = "Last updated on " + date.toLocaleString();
+		localStorage.setItem("last_updated_date", footer.innerText);
+	</script>
   </body>
 </html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=0.5">
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📜</text></svg>">
+	<title>Blog - lazergenix.dev</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
+	<style>
+		body {
+			background-color: #000;
+			color: #FFF;
+			margin: 0;
+			font-family: 'Fira Code', monospace;
+			font-optical-sizing: auto;
+			font-weight: 400;
+			font-style: normal;
+		}
+
+		header {
+			text-align: center;
+		}
+
+		main {
+			max-width: 700px;
+			margin: 40px auto 0 auto;
+			padding: 0 1rem;
+		}
+
+		main a {
+			text-decoration: none;
+		}
+
+		main .content {
+			padding-left: 1em;
+		}
+
+		a {
+			color: #FFF;
+		}
+
+		h1 a:hover {
+			color: #929292;
+		}
+
+		#topbar {
+			display: flex;
+			gap: 1em;
+			justify-content: center;
+		}
+      
+		#topbar a {
+			text-decoration: none;
+			position: relative;
+			padding: 10px 20px;
+			font-size: 16px;
+			font-weight: bold;
+			border: none;
+			overflow: hidden;
+		}
+
+		#topbar a::after {
+			content: "";
+			background: white;        /* Bar color */
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			height: 3px;                /* Bar thickness */
+			width: 0%;
+			transition: width 0.3s ease;
+		}
+		
+		#topbar a:hover::after {
+			width: 100%;
+		}
+
+		h3 {
+			background-color: #FFF;
+			color: #000;
+			width: fit-content;
+			padding: 2px 4px;
+			display: inline-block;
+			margin: 0;
+		}
+
+		footer {
+			color: gray;
+			text-align: center;
+			margin-top: 100px;
+			margin-bottom: 10px;
+		}
+
+		svg {
+			fill: currentColor;
+			width: 16px;
+			height: 16px;
+		}
+
+
+		.project {
+			display: flex;
+			align-items: center;
+			gap: 1em;
+			margin-bottom: 2em;
+			padding: 1em;
+			border-radius: 12px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.image-corners {
+			position: relative;
+			display: inline-block;
+		}
+
+		.image-corners img {
+			display: block;
+			width: 200px;
+		}
+
+		/* Base corner style */
+		.image-corners span {
+			position: absolute;
+			width: 30px;
+			/* length of corner lines */
+			height: 30px;
+			border: 3px solid #FFF;
+			/* border thickness + color */
+		}
+
+		/* Offset distance between image and border */
+		:root {
+			--corner-offset: 8px;
+		}
+
+		/* Top-left */
+		.image-corners .corner-tl {
+			top: calc(0px - var(--corner-offset));
+			left: calc(0px - var(--corner-offset));
+			border-right: none;
+			border-bottom: none;
+		}
+
+		/* Top-right */
+		.image-corners .corner-tr {
+			top: calc(0px - var(--corner-offset));
+			right: calc(0px - var(--corner-offset));
+			border-left: none;
+			border-bottom: none;
+		}
+
+		/* Bottom-left */
+		.image-corners .corner-bl {
+			bottom: calc(0px - var(--corner-offset));
+			left: calc(0px - var(--corner-offset));
+			border-right: none;
+			border-top: none;
+		}
+
+		/* Bottom-right */
+		.image-corners .corner-br {
+			bottom: calc(0px - var(--corner-offset));
+			right: calc(0px - var(--corner-offset));
+			border-left: none;
+			border-top: none;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1><a href="/">lazergenix.dev</a> / Blog</h1>
+
+		<div id="topbar">
+			<a href="/projects/">Projects</a>
+			<a href="/games/">Games</a>
+			<a href="/about/">About</a>
+		</div>
+	</header>
+
+	<main>
+		<p>Nothing.. Yet!</p>
+	</main>
+
+	<footer>
+		Copyright (c) 2025 lazergenixdev
+	</footer>
+</body>
+
+</html>
