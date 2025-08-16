@@ -435,6 +435,10 @@
 
 		function setTheme(value) {
 			themeOverride = value;
+			if (themeOverride === undefined) {
+				localStorage.removeItem("color-theme");
+				return;
+			}
 			localStorage.setItem("color-theme", value == theme.dark ? "dark" : "light");
 		}
 
@@ -463,8 +467,8 @@
 			document.body.classList.remove("light", "dark");
 			if (getTheme() != getPreferedTheme()) {
 				themeToggle.checked = !themeToggle.checked;
-				setTheme(undefined);
 			}
+			setTheme(undefined);
 			auto.disabled = true;
 		}
 	</script>
