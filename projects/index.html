@@ -1,48 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="initial-scale=0.5">
-    <title>Projects</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
-    <style>
-      body {
-        background-color: black;
-        color: #FFF;
-        margin: 0;
-        font-family: 'Fira Code', monospace;
-        font-optical-sizing: auto;
-        font-weight: 400;
-        font-style: normal;
-      }
 
-      header {
-        text-align: center;
-      }
-	  
-      a {
-        color: white;
-      }
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=0.5">
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
+	<title>Projects</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
+	<style>
+		body {
+			background-color: #000;
+			color: #FFF;
+			margin: 0;
+			font-family: 'Fira Code', monospace;
+			font-optical-sizing: auto;
+			font-weight: 400;
+			font-style: normal;
+		}
 
-      footer {
-        color: gray;
-        text-align: center;
-        margin-top: 100px;
-        margin-bottom: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1><a href="/">lazergenix.dev</a></h1>
-    </header>
+		header {
+			text-align: center;
+		}
 
-	<section>
-		
-	</section>
+		main {
+			margin-left: 25%;
+		}
 
-    <footer>
-      Copyright (c) 2025 lazergenixdev
-    </footer>
-  </body>
+		main a {
+			text-decoration: none;
+		}
+
+		main .content {
+			padding-left: 1em;
+		}
+
+		a {
+			color: #FFF;
+			/*text-decoration: none;/**/
+		}
+
+		a:hover {
+			color: #929292;
+		}
+
+		/**/
+
+		h3 {
+			background-color: #FFF;
+			color: #000;
+			width: fit-content;
+			padding: 2px 4px;
+			display: inline-block;
+			margin: 0;
+		}
+
+		footer {
+			color: gray;
+			text-align: center;
+			margin-top: 100px;
+			margin-bottom: 10px;
+		}
+
+		svg {
+			fill: currentColor;
+			width: 16px;
+			height: 16px;
+		}
+
+
+		.project {
+			display: flex;
+			align-items: center;
+			gap: 1em;
+			margin-bottom: 2em;
+			padding: 1em;
+			border-radius: 12px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.image-corners {
+			position: relative;
+			display: inline-block;
+		}
+
+		.image-corners img {
+			display: block;
+			width: 200px;
+		}
+
+		/* Base corner style */
+		.image-corners span {
+			position: absolute;
+			width: 30px;
+			/* length of corner lines */
+			height: 30px;
+			border: 3px solid #FFF;
+			/* border thickness + color */
+		}
+
+		/* Offset distance between image and border */
+		:root {
+			--corner-offset: 8px;
+		}
+
+		/* Top-left */
+		.image-corners .corner-tl {
+			top: calc(0px - var(--corner-offset));
+			left: calc(0px - var(--corner-offset));
+			border-right: none;
+			border-bottom: none;
+		}
+
+		/* Top-right */
+		.image-corners .corner-tr {
+			top: calc(0px - var(--corner-offset));
+			right: calc(0px - var(--corner-offset));
+			border-left: none;
+			border-bottom: none;
+		}
+
+		/* Bottom-left */
+		.image-corners .corner-bl {
+			bottom: calc(0px - var(--corner-offset));
+			left: calc(0px - var(--corner-offset));
+			border-right: none;
+			border-top: none;
+		}
+
+		/* Bottom-right */
+		.image-corners .corner-br {
+			bottom: calc(0px - var(--corner-offset));
+			right: calc(0px - var(--corner-offset));
+			border-left: none;
+			border-top: none;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1><a href="/">lazergenix.dev</a> / Projects</h1>
+	</header>
+
+	<main>
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-pathtracer.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://mbizzigotti.github.io/cse168-showcase/final-project">
+					<h3>Optix Path Tracer</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>A real-time path tracer written using NVIDIA Optix</p>
+			</div>
+		</div>
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-voxelengine.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://github.com/lazergenixdev/First-Voxel-Engine/tree/lod">
+					<h3>Voxel Rendering</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>Voxel rendering engine, multi-threaded, written in C++/Vulkan</p>
+			</div>
+		</div>
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-kailang.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://github.com/lazergenixdev/First-Voxel-Engine/tree/lod">
+					<h3>Kai Compiler</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>Header only scripting language compiler written in C</p>
+			</div>
+		</div>
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-fission.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://github.com/lazergenixdev/Fission">
+					<h3>Fission</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>Cross-Platform C++/Vulkan game framework</p>
+			</div>
+		</div>
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-ytmm.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://github.com/lazergenixdev/ytmm">
+					<h3>Youtube Music Manager</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>Python module for managing a database of songs and playlists</p>
+			</div>
+		</div>
+	</main>
+
+	<footer>
+		Copyright (c) 2025 lazergenixdev
+	</footer>
+</body>
+
 </html>
