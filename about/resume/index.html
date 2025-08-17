@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📃</text></svg>">
+    <title>Resume - lazergenix.dev</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
+    <style>
+		:root {
+			--corner-offset: 8px;
+			color-scheme: light dark;
+			--fg: light-dark(#000, #FFF);
+			--bg: light-dark(#FFF, #000);
+			--light: light-dark(#BBB, #222);
+		}
+		.light {
+			color-scheme: only light;
+		}
+		.dark {
+			color-scheme: only dark;
+		}
+
+		body {
+			background-color: #000;
+			color: #FFF;
+			margin: 0;
+			font-family: 'Fira Code', monospace;
+			font-optical-sizing: auto;
+			font-weight: 400;
+			font-style: normal;
+		}
+
+		header {
+			text-align: center;
+		}
+
+		main {
+			max-width: 700px;
+			margin: 40px auto 0 auto;
+			padding: 0 1rem;
+			align-items: center;
+		}
+
+		main .content {
+			padding-left: 1em;
+		}
+
+		main div {
+			display: flex;
+			justify-content: center;
+		}
+
+		a {
+			color: #FFF;
+		}
+
+		h1 a:hover {
+			color: #929292;
+		}
+
+		input, button {
+			font-size: 16px;
+			font-family: 'Fira Code', monospace;
+			display:inline-block;
+		}
+
+		input {
+			background-color: var(--bg);
+			border: solid 3px var(--bg);
+			padding: 8px;
+			border: solid 2px black;
+		}
+
+		button {
+			border: none;
+			padding: 4px 12px;
+			background-color: var(--fg);
+			color: var(--bg);
+			font-weight: bold;
+		}
+
+		button:hover {
+			background-color: #AAA;
+			cursor: pointer;
+		}
+
+		.hidden {
+			visibility: hidden;
+		}
+
+		#message {
+			background-color: #311;
+			padding: 4px 10px;
+			width: fit-content;
+		}
+
+		footer {
+			color: gray;
+			text-align: center;
+			margin-top: 100px;
+			margin-bottom: 10px;
+		}
+    </style>
+  </head>
+  <body>
+    <header>
+		<h1><a href="/">lazergenix.dev</a> / <a href="/about/">About</a> / Resume</h1>
+    </header>
+
+	<main>
+		<div>
+			<input type="text" name="key" placeholder="Enter Key...">
+			<button onclick="OpenResume()">Submit</button>
+		</div>
+		
+		<div>
+			<p id="message" class="hidden"></p>
+		</div>
+	</main>
+
+    <footer>
+      Copyright (c) 2025 lazergenixdev
+    </footer>
+
+	<script>
+		const input = document.querySelector("input");
+		const params = new URLSearchParams(window.location.search);
+		const OpenResume = () => OpenEncrypted("./Resume.enc");
+		
+		if (params.has("key")) {
+			input.value = params.get("key");
+			OpenResume();
+		}
+
+		function BufferFromBase64(base64) {
+			return Uint8Array.from(atob(base64), c=>c.charCodeAt(0));
+		}
+		async function BufferFromURL(url) {
+			const res = await fetch(url);
+			const buffer = await res.arrayBuffer();
+			return new Uint8Array(buffer);
+		}
+		async function Decrypt(key, encrypted) {
+			const algorithm = { name: "AES-CBC", iv: BufferFromBase64("K8MBo9XgrhzNPu5YSPnHYA==") };
+			return await crypto.subtle.decrypt(algorithm, key, encrypted);
+		}
+		async function MakeKey(password) {
+			const salt = BufferFromBase64("K2z75M1871+J6OOrmFLlSO3Zc7UifoM62HmI5wxpV0zaHWhtVFvtO0by8e0D0e8RySZtxZYLl5wtaiG0b5Qoxg==");
+			const buffer = new TextEncoder().encode(password);
+			const hash = await crypto.subtle.digest("SHA-256", new Uint8Array([...buffer, ...salt, ...buffer]));
+			return await crypto.subtle.importKey("raw", hash, {name: "AES-CBC"}, false, ["decrypt"]);
+		}
+		async function OpenEncrypted(url) {
+			try {
+				const key = await MakeKey(input.value);
+				const encrypted = await BufferFromURL(url);
+				const plainText = await Decrypt(key, encrypted);
+				if (new TextDecoder().decode(plainText.slice(0,4)) !== "%PDF") {
+					throw Error("Not a PDF");
+				}
+				const object = URL.createObjectURL(new Blob([plainText], {type: "application/pdf"}));
+				open(object, "_self");
+			}
+			catch (err) {
+				const message = document.getElementById("message");
+				message.classList.remove("hidden");
+				message.innerText = "Incorrect Key";
+			}
+		}
+	</script>
+  </body>
+</html>

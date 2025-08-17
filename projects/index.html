@@ -3,9 +3,9 @@
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="initial-scale=0.5">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
-	<title>Projects</title>
+	<title>Projects - lazergenix.dev</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
 	<style>
 		:root {
@@ -13,7 +13,7 @@
 			color-scheme: light dark;
 			--fg: light-dark(#000, #FFF);
 			--bg: light-dark(#FFF, #000);
-			--light: light-dark(#BBB, #111);
+			--light: light-dark(#BBB, #222);
 		}
 		.light {
 			color-scheme: only light;
@@ -65,11 +65,13 @@
 			position:fixed;
 			left: 10px;
 			top: 10px;
+			z-index: 100;
 		}
 
 		#auto-light-dark {
-			background: none;
+			background-color: var(--bg);
 			border: none;
+			border-radius: 32px;
 		}
 		
 		#auto-light-dark:hover:not([disabled]) {
@@ -77,8 +79,9 @@
 			cursor: pointer;
 		}
 
-		* [disabled] {
+		#auto-light-dark:disabled {
 			color: #0000;
+			background: none;
 		}
 
       #topbar {
@@ -100,7 +103,7 @@
 
       #topbar a::after {
         content: "";
-        background: white;        /* Bar color */
+        background: var(--fg);        /* Bar color */
         position: absolute;
         bottom: 0;
         left: 0;
@@ -141,12 +144,12 @@
 			gap: 1em;
 			margin-bottom: 2em;
 			padding: 1em;
-			border-radius: 12px;
 		}
 
 		.image-corners {
 			position: relative;
 			display: inline-block;
+			z-index: 0;
 		}
 
 		.image-corners img {
@@ -264,6 +267,38 @@
     .switch input:not(:checked) + .slider .sun {
       opacity: 1;
     }
+	
+	@media screen and (width < 800px) {
+		main {
+			max-width: 400px;
+			margin: 40px auto 0 auto;
+			padding: 0 1rem;
+		}
+		.project {
+			flex-direction: column;
+			align-items: center;
+			justify-items: center;
+		}
+		.content {
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+		}
+		.content a {
+			text-align: center;
+		}
+		h3 {
+			text-align: center;
+		}
+		.image-corners {
+			width: fit-content;
+		}
+	}
+	@media screen and (width < 800px) {
+		header {
+			margin-top: 48px;
+		}
+	}
 	</style>
 </head>
 
