@@ -145,54 +145,6 @@
 
 	<main>
 		<h1 style="text-align: center;">🚧 WIP 🚧</h1>
-
-		
-		const footer = document.querySelector("footer");
-		footer.innerText = localStorage.getItem("last_updated_date");
-		const url = "https://api.github.com/repos/lazergenixdev/lazergenix.dev/commits?per_page=1";
-		const response = await fetch(url, { headers: {"Accept": "application/vnd.github+json"} });
-
-		if (!response.ok) {
-			throw Error(`fetching commits: ${response.status}`);
-		}
-
-		const commit_data = await response.json();
-		const date = new Date(commit_data[0].commit.author.date);
-
-		footer.innerText = "Last updated on " + date.toLocaleString();
-		localStorage.setItem("last_updated_date", footer.innerText);
-
-		
-		const footer = document.querySelector("footer");
-		footer.innerText = localStorage.getItem("last_updated_date");
-		const url = "https://api.github.com/repos/lazergenixdev/lazergenix.dev/commits?per_page=1";
-		const response = await fetch(url, { headers: {"Accept": "application/vnd.github+json"} });
-
-		if (!response.ok) {
-			throw Error(`fetching commits: ${response.status}`);
-		}
-
-		const commit_data = await response.json();
-		const date = new Date(commit_data[0].commit.author.date);
-
-		footer.innerText = "Last updated on " + date.toLocaleString();
-		localStorage.setItem("last_updated_date", footer.innerText);
-
-		
-		const footer = document.querySelector("footer");
-		footer.innerText = localStorage.getItem("last_updated_date");
-		const url = "https://api.github.com/repos/lazergenixdev/lazergenix.dev/commits?per_page=1";
-		const response = await fetch(url, { headers: {"Accept": "application/vnd.github+json"} });
-
-		if (!response.ok) {
-			throw Error(`fetching commits: ${response.status}`);
-		}
-
-		const commit_data = await response.json();
-		const date = new Date(commit_data[0].commit.author.date);
-
-		footer.innerText = "Last updated on " + date.toLocaleString();
-		localStorage.setItem("last_updated_date", footer.innerText);
 	</main>
 
     <footer>
