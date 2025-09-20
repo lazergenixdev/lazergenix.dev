@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=0.8">
 	<title>lazergenix.dev</title>
 	<link rel="icon"
 		href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
@@ -127,6 +127,10 @@
 			opacity: 1;
 		}
 
+		html {
+			overflow-x: hidden;
+		}
+
 		body {
 			background-color: light-dark(var(--light-bg), var(--dark-bg));
 			color: light-dark(var(--light-color), var(--dark-color));
@@ -147,6 +151,44 @@
 			display: flex;
 			gap: 1em;
 			justify-content: center;
+		}
+
+		@media (max-width: 600px) {
+			nav {
+				gap: 0;
+			}
+		}
+
+		@media screen and (width < 800px) {
+			main {
+				max-width: 400px;
+				margin: 40px auto 0 auto;
+				padding: 0 1rem;
+			}
+			.project {
+				flex-direction: column;
+				align-items: center;
+				justify-items: center;
+			}
+			.content {
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+			}
+			.content a {
+				text-align: center;
+			}
+			h3 {
+				text-align: center;
+			}
+			.image-corners {
+				width: fit-content;
+			}
+		}
+		@media screen and (width < 800px) {
+			header {
+				margin-top: 48px;
+			}
 		}
 
 		nav button {
@@ -195,6 +237,7 @@
 		}
 
 		.page {
+			overflow: hidden; /* ensures children can’t expand width */
 			position: absolute;
 			top: 10.0rem;
 			left: 0;
