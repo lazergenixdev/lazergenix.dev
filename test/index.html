@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>lazergenix.dev</title>
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
+	<style>
+		/*  */
+		:root {
+			--corner-offset: 8px;
+			color-scheme: light dark;
+			--fg: light-dark(#000, #FFF);
+			--bg: light-dark(#FFF, #000);
+			--light: light-dark(#BBB, #222);
+		}
+		.light {
+			color-scheme: only light;
+		}
+		.dark {
+			color-scheme: only dark;
+		}
+
+		body {
+			margin: 0;
+			overflow: hidden;
+			font-family: sans-serif;
+		}
+
+		nav {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			background: #222;
+			color: #fff;
+			z-index: 1000;
+			display: flex;
+			justify-content: center;
+			gap: 1rem;
+			padding: 1rem;
+		}
+
+		nav button {
+			background: #444;
+			color: white;
+			border: 0;
+			padding: 0.5rem 1rem;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		.page {
+			position: fixed;
+			top: 3.5rem;
+			left: 0;
+			width: 100%;
+			height: calc(100vh - 3.5rem);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 3rem;
+			color: white;
+			transition: transform 0.25s ease-in-out;
+			z-index: 0;
+		}
+
+		/* Colors */
+		.home {
+			background: #2c3e50;
+		}
+
+		.blogs {
+			background: #3498db;
+		}
+
+		.projects {
+			background: #e67e22;
+		}
+
+		.games {
+			background: #27ae60;
+		}
+
+		.about {
+			background: #9b59b6;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<div id="theme-selection">
+			<label class="switch">
+				<input type="checkbox" id="mode-toggle" onclick="toggleTheme()">
+				<span class="slider">
+					<svg class="icon sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-360q50 0 85-35t35-85-35-85-85-35-85 35-35 85 35 85 85 35m0 80q-83 0-141.5-58.5T280-480t58.5-141.5T480-680t141.5 58.5T680-480t-58.5 141.5T480-280M200-440H40v-80h160zm720 0H760v-80h160zM440-760v-160h80v160zm0 720v-160h80v160zM256-650l-101-97 57-59 96 100zm492 496-97-101 53-55 101 97zm-98-550 97-101 59 57-100 96zM154-212l101-97 55 53-97 101zm326-268"/></svg>
+					<svg class="icon moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-120q-150 0-255-105T120-480t105-255 255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120m0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82m-10-270"/></svg>
+				</span>
+			</label>
+			<button id="auto-light-dark" disabled onclick="setAutoThemeSelection()">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M440-200q52 0 99-21t81-60q-128-8-214-99.5T320-600q0-13 1-25.5t3-24.5q-57 32-90.5 88T200-440q0 100 70 170t170 70m0 80q-134 0-227-93t-93-227 93-227 227-93q5 0 10 .5t10 .5q-29 32-44.5 73T400-600q0 100 70 170t170 70q31 0 60.5-7.5T756-390q-18 118-108 194t-208 76m112-400 128-360h80l128 360h-76l-28-80H656l-28 80zm122-134h92l-46-146zM407-381"/></svg>
+			</button>
+		</div>
+
+		<h1><a href="/">lazergenix.dev</a> / Projects</h1>
+		
+		<nav>
+			<button onclick="goTo(0)">Projects</button>
+			<button onclick="goTo(1)">Blogs</button>
+			<button onclick="goTo(2)">Home</button>
+			<button onclick="goTo(3)">Games</button>
+			<button onclick="goTo(4)">About</button>
+		</nav>
+	</header>
+
+	<section class="page home">Home</section>
+	<section class="page blogs">Blogs</section>
+	<section class="page projects">Projects</section>
+	<section class="page games">Games</section>
+	<section class="page about">About</section>
+
+	<script>
+		const pages = document.querySelectorAll('.page');
+		let current = 0;
+
+		// Position pages: left=-100%, current=0, right=+100%
+		function layoutPages(targetIndex = current) {
+			pages.forEach((p, i) => {
+				p.style.transition = 'none';
+				if (i < targetIndex) p.style.transform = 'translateX(-100%)';
+				else if (i === targetIndex) p.style.transform = 'translateX(0)';
+				else p.style.transform = 'translateX(100%)';
+				p.style.zIndex = (i === targetIndex) ? 2 : 0;
+			});
+		}
+
+		function goTo(index) {
+			if (index === current) return;
+			setNavButtonsEnabled(false);
+			const direction = index > current ? 1 : -1;
+			const curr = pages[current];
+			const next = pages[index];
+
+			// Place next page immediately left or right
+			next.style.transition = 'none';
+			next.style.transform = `translateX(${direction * 100}%)`;
+			next.style.zIndex = 3;
+
+			// Force reflow so browser picks up start position
+			void next.offsetWidth;
+
+			// Animate
+			curr.style.transition = 'transform 0.25s ease-in-out';
+			next.style.transition = 'transform 0.25s ease-in-out';
+
+			curr.style.transform = `translateX(${-direction * 100}%)`;
+			next.style.transform = 'translateX(0)';
+
+			function setNavButtonsEnabled(enabled) {
+				const buttons = document.querySelectorAll('nav button');
+				buttons.forEach(btn => btn.disabled = !enabled);
+			}
+
+			// After transition, reset positions
+			next.addEventListener('transitionend', function handler() {
+				current = index;
+				layoutPages();
+				setNavButtonsEnabled(true);
+				next.removeEventListener('transitionend', handler);
+			}, { once: true });
+		}
+
+		// Initialize
+		layoutPages();
+	</script>
+</body>
+
+</html>
