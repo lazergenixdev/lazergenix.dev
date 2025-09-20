@@ -14,12 +14,19 @@
 	<style>
 		/* Light/Dark mode */
 		:root {
-			--corner-offset: 8px;
 			color-scheme: light dark;
-			--subtle: light-dark(#CCC, #444);
-			--fg: light-dark(#000, #FFF);
-			--bg: light-dark(#FFF, #000);
-			--light: light-dark(#BBB, #222);
+
+			--light-bg: #FFF;
+			--light-color: #000;
+			--light-subtle: #BBB;
+			--light-switch: #DDD;
+
+			--dark-bg: #000;
+			--dark-color: #FFF;
+			--dark-subtle: #444;
+			--dark-switch: #222;
+
+			--corner-offset: 8px;
 		}
 
 		.light {
@@ -47,7 +54,7 @@
 		.slider {
 			position: absolute;
 			inset: 0;
-			background: var(--light);
+			background-color: light-dark(var(--light-switch), var(--dark-switch));
 			border-radius: 30px;
 			transition: background 0.4s ease;
 			display: flex;
@@ -65,7 +72,7 @@
 			width: 20px;
 			left: 6px;
 			bottom: 5px;
-			background: var(--bg);
+			background-color: light-dark(var(--light-bg), var(--dark-bg));
 			border-radius: 50%;
 			transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
 			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -82,7 +89,8 @@
 		}
 
 		#auto-light-dark {
-			background-color: var(--bg);
+			color: light-dark(var(--light-color), var(--dark-color));
+			background-color: light-dark(var(--light-bg), var(--dark-bg));
 			border: none;
 			border-radius: 32px;
 		}
@@ -93,8 +101,8 @@
 		}
 
 		#auto-light-dark:disabled {
-			color: #0000;
-			background: none;
+			color: transparent;
+			background-color: transparent;
 		}
 
 		/* Icons */
@@ -120,8 +128,8 @@
 		}
 
 		body {
-			background-color: var(--bg);
-			color: var(--fg);
+			background-color: light-dark(var(--light-bg), var(--dark-bg));
+			color: light-dark(var(--light-color), var(--dark-color));
 			margin: 0;
 			font-family: 'Fira Code', monospace;
 			font-optical-sizing: auto;
@@ -142,8 +150,9 @@
 		}
 
 		nav button {
-			background: none;
-			color: var(--fg);
+			font-family: 'Fira Code', monospace;
+			color: light-dark(var(--light-color), var(--dark-color));
+			background-color: transparent;
 			position: relative;
 			padding: 10px 20px;
 			font-size: 16px;
@@ -155,8 +164,8 @@
 
 		nav button::after {
 			content: "";
-			background: var(--fg);
 			/* Bar color */
+			background-color: light-dark(var(--light-color), var(--dark-color));
 			position: absolute;
 			bottom: 0;
 			left: 0;
@@ -179,6 +188,10 @@
 		#links {
 			display: flex;
 			gap: 18px;
+		}
+
+		section {
+			background-color: transparent;
 		}
 
 		.page {
@@ -210,8 +223,8 @@
 		}
 
 		.projects h3 {
-			background-color: var(--fg);
-			color: var(--bg);
+			background-color: light-dark(var(--light-color), var(--dark-color));
+			color: light-dark(var(--light-bg), var(--dark-bg));
 			width: fit-content;
 			padding: 2px 4px;
 			display: inline-block;
@@ -220,7 +233,6 @@
 
 		.projects a {
 			text-decoration: none;
-			color: var(--fg);
 		}
 
 		.projects .content {
@@ -252,7 +264,7 @@
 			width: 30px;
 			/* length of corner lines */
 			height: 30px;
-			border: 3px solid var(--fg);
+			border: 3px solid light-dark(var(--light-color), var(--dark-color));
 			/* border thickness + color */
 		}
 
@@ -299,7 +311,7 @@
 		*,
 		*::before,
 		*::after {
-		box-sizing: border-box;
+			box-sizing: border-box;
 		}
 	</style>
 </head>
@@ -392,14 +404,12 @@
 				</svg>
 			</a>
 			</div>
+			<!--Youtube-->
+			<!--Instagram-->
 		</section>
-		<!--LinkedIn-->
-		<!--Youtube-->
-		<!--Instagram-->
-		<!---->
 
 		<section>
-			<h1>Contact <span style="font-size: small; color: var(--subtle)">(get in touch or just say hi!)</span></h1>
+			<h1>Contact <span style="font-size: small; color: light-dark(var(--light-subtle), var(--dark-subtle))">(get in touch or just say hi!)</span></h1>
 			<a href="mailto:contact@lazergenix.dev">contact@lazergenix.dev</a>
 		</section>
 	</section>
@@ -522,7 +532,7 @@
 
 	<script>
 		const hash = window.location.hash.slice(1); // remove the '#'
-		
+
 
 		const buttons = document.querySelectorAll("nav button");
 		buttons.forEach((btn, index) => {
