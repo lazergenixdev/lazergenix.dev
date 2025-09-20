@@ -1,172 +1,691 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
-    <title>lazergenix.dev</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
-    <style>
+
+<head>
+	<meta charset="UTF-8">
+	<title>lazergenix.dev</title>
+	<link rel="icon"
+		href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
+	<link rel="preload" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/woff2/FiraCode-Bold.woff2" as="font"
+		type="font/woff2" crossorigin>
+	<link rel="preload" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/woff2/FiraCode-Regular.woff2" as="font"
+		type="font/woff2" crossorigin>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
+	<style>
+		/* Light/Dark mode */
 		:root {
 			--corner-offset: 8px;
 			color-scheme: light dark;
+			--subtle: light-dark(#CCC, #444);
 			--fg: light-dark(#000, #FFF);
 			--bg: light-dark(#FFF, #000);
 			--light: light-dark(#BBB, #222);
 		}
+
 		.light {
 			color-scheme: only light;
 		}
+
 		.dark {
 			color-scheme: only dark;
 		}
 
-      body {
-        background-color: black;
-        color: #FFF;
-        margin: 0;
-        font-family: 'Fira Code', monospace;
-        font-optical-sizing: auto;
-        font-weight: 400;
-        font-style: normal;
-      }
+		.switch {
+			position: relative;
+			display: inline-block;
+			width: 60px;
+			height: 30px;
+			cursor: pointer;
+		}
 
-	  #links {
-		position: absolute;
-		right: 12px;
-		top: 12px;
-		display: flex;
-		gap: 18px;
-	  }
+		/* Hide checkbox */
+		.switch input {
+			display: none;
+		}
 
-	  #links a {
-		background-color: var(--bg);
-		border-radius: 24px;
-		width:  48px;
-		height: 48px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		transition: all 0.2s ease;
-	  }
+		/* Slider track */
+		.slider {
+			position: absolute;
+			inset: 0;
+			background: var(--light);
+			border-radius: 30px;
+			transition: background 0.4s ease;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 6px;
+			font-size: 14px;
+		}
 
-	  #links a:hover {
-		background-color: var(--fg);
-		color: var(--bg);
-	  }
+		/* Circle knob */
+		.slider::before {
+			content: "";
+			position: absolute;
+			height: 20px;
+			width: 20px;
+			left: 6px;
+			bottom: 5px;
+			background: var(--bg);
+			border-radius: 50%;
+			transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+		}
+
+		#theme-selection {
+			display: flex;
+			gap: 10px;
+			text-align: left;
+			position: fixed;
+			left: 10px;
+			top: 10px;
+			z-index: 100;
+		}
+
+		#auto-light-dark {
+			background-color: var(--bg);
+			border: none;
+			border-radius: 32px;
+		}
+
+		#auto-light-dark:hover:not([disabled]) {
+			color: light-dark(darkgreen, lightgreen);
+			cursor: pointer;
+		}
+
+		#auto-light-dark:disabled {
+			color: #0000;
+			background: none;
+		}
+
+		/* Icons */
+		.slider .icon {
+			opacity: 1.0;
+			transition: opacity 0.3s ease;
+		}
+
+		.switch input:checked+.slider::before {
+			transform: translateX(28px);
+		}
+
+		.switch input:checked+.slider .moon {
+			opacity: 1;
+		}
+
+		.switch input:checked+.slider .sun {
+			opacity: 1.0;
+		}
+
+		.switch input:not(:checked)+.slider .sun {
+			opacity: 1;
+		}
+
+		body {
+			background-color: var(--bg);
+			color: var(--fg);
+			margin: 0;
+			font-family: 'Fira Code', monospace;
+			font-optical-sizing: auto;
+			font-weight: 400;
+			font-style: normal;
+			overflow-x: hidden;
+		}
+
+		/* Page Title Bar */
+		header {
+			text-align: center;
+		}
+
+		nav {
+			display: flex;
+			gap: 1em;
+			justify-content: center;
+		}
+
+		nav button {
+			background: none;
+			color: var(--fg);
+			position: relative;
+			padding: 10px 20px;
+			font-size: 16px;
+			font-weight: bold;
+			border: none;
+			cursor: pointer;
+			overflow: hidden;
+		}
+
+		nav button::after {
+			content: "";
+			background: var(--fg);
+			/* Bar color */
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			height: 3px;
+			/* Bar thickness */
+			width: var(--nav-underline-width, 0);
+			transition: width 0.3s ease;
+		}
+
+		nav button:hover::after {
+			width: 100%;
+		}
 
 		svg {
 			fill: currentColor;
-			width: 32px;
-			height: 32px;
+			width: 16px;
+			height: 16px;
 		}
 
-      header {
-        text-align: center;
-      }
-	  
-		main {
-			max-width: 700px;
-			margin: 40px auto 0 auto;
-			padding: 0 1rem;
+		#links {
+			display: flex;
+			gap: 18px;
 		}
 
-		a {
-		  color: white;
-		  text-decoration: none;
+		.page {
+			position: absolute;
+			top: 10.0rem;
+			left: 0;
+			width: 100%;
+			padding-left: 5%;
+			padding-right: 5%;
+			transition: transform 0.25s ease-in-out;
+			z-index: 0;
 		}
 
-      #topbar {
-        display: flex;
-        gap: 1em;
-        justify-content: center;
-      }
+		.page section {
+			margin-bottom: 4rem;
+		}
 
-      #topbar a {
-        text-decoration: none;
-        position: relative;
-        padding: 10px 20px;
-        font-size: 16px;
-        font-weight: bold;
-        border: none;
-        cursor: pointer;
-        overflow: hidden;
-      }
+		/* Colors */
+		.home footer {
+			color: gray;
+			text-align: center;
+			margin-top: 100px;
+			margin-bottom: 10px;
+		}
 
-      #topbar a::after {
-        content: "";
-        background: white;        /* Bar color */
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 3px;                /* Bar thickness */
-        width: 0%;
-        transition: width 0.3s ease;
-      }
-      
-      #topbar a:hover::after {
-        width: 100%;
-      }
+		.projects {
+			padding-left: 10%;
+			padding-right: 10%;
+		}
 
-      footer {
-        color: gray;
-        text-align: center;
-        margin-top: 100px;
-        margin-bottom: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-		<div id="links">
-			<a href="https://discordapp.com/users/232197887218548737">
-				<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-					<title>Discord</title>
-					<path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+		.projects h3 {
+			background-color: var(--fg);
+			color: var(--bg);
+			width: fit-content;
+			padding: 2px 4px;
+			display: inline-block;
+			margin: 0;
+		}
+
+		.projects a {
+			text-decoration: none;
+			color: var(--fg);
+		}
+
+		.projects .content {
+			padding-left: 1em;
+		}
+
+		.project {
+			display: flex;
+			align-items: center;
+			gap: 1em;
+			margin-bottom: 2em;
+			padding: 1em;
+		}
+
+		.image-corners {
+			position: relative;
+			display: inline-block;
+			z-index: 0;
+		}
+
+		.image-corners img {
+			display: block;
+			width: 200px;
+		}
+
+		/* Base corner style */
+		.image-corners span {
+			position: absolute;
+			width: 30px;
+			/* length of corner lines */
+			height: 30px;
+			border: 3px solid var(--fg);
+			/* border thickness + color */
+		}
+
+		/* Top-left */
+		.image-corners .corner-tl {
+			top: calc(0px - var(--corner-offset));
+			left: calc(0px - var(--corner-offset));
+			border-right: none;
+			border-bottom: none;
+		}
+
+		/* Top-right */
+		.image-corners .corner-tr {
+			top: calc(0px - var(--corner-offset));
+			right: calc(0px - var(--corner-offset));
+			border-left: none;
+			border-bottom: none;
+		}
+
+		/* Bottom-left */
+		.image-corners .corner-bl {
+			bottom: calc(0px - var(--corner-offset));
+			left: calc(0px - var(--corner-offset));
+			border-right: none;
+			border-top: none;
+		}
+
+		/* Bottom-right */
+		.image-corners .corner-br {
+			bottom: calc(0px - var(--corner-offset));
+			right: calc(0px - var(--corner-offset));
+			border-left: none;
+			border-top: none;
+		}
+
+		.about svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		.about h1 {
+			font-size: 1.5rem;
+		}
+		*,
+		*::before,
+		*::after {
+		box-sizing: border-box;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<div id="theme-selection">
+			<label class="switch">
+				<input type="checkbox" id="mode-toggle" onclick="toggleTheme()">
+				<span class="slider">
+					<svg class="icon sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+						<path
+							d="M480-360q50 0 85-35t35-85-35-85-85-35-85 35-35 85 35 85 85 35m0 80q-83 0-141.5-58.5T280-480t58.5-141.5T480-680t141.5 58.5T680-480t-58.5 141.5T480-280M200-440H40v-80h160zm720 0H760v-80h160zM440-760v-160h80v160zm0 720v-160h80v160zM256-650l-101-97 57-59 96 100zm492 496-97-101 53-55 101 97zm-98-550 97-101 59 57-100 96zM154-212l101-97 55 53-97 101zm326-268" />
+					</svg>
+					<svg class="icon moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+						<path
+							d="M480-120q-150 0-255-105T120-480t105-255 255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120m0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82m-10-270" />
+					</svg>
+				</span>
+			</label>
+			<button id="auto-light-dark" disabled onclick="setAutoThemeSelection()">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+					<path
+						d="M440-200q52 0 99-21t81-60q-128-8-214-99.5T320-600q0-13 1-25.5t3-24.5q-57 32-90.5 88T200-440q0 100 70 170t170 70m0 80q-134 0-227-93t-93-227 93-227 227-93q5 0 10 .5t10 .5q-29 32-44.5 73T400-600q0 100 70 170t170 70q31 0 60.5-7.5T756-390q-18 118-108 194t-208 76m112-400 128-360h80l128 360h-76l-28-80H656l-28 80zm122-134h92l-46-146zM407-381" />
 				</svg>
-			</a>
-			<a href="https://github.com/lazergenixdev">
-				<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-					<title>GitHub</title>
-					<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-				</svg>
-			</a>
+			</button>
 		</div>
 
 		<h1>lazergenix.dev</h1>
 
-		<div id="topbar">
-			<a href="/blog/">Blog</a>
-			<a href="/projects/">Projects</a>
-			<a href="/games/">Games</a>
-			<a href="/about/">About</a>
+		<nav>
+			<button>About</button>
+			<button>Blog</button>
+			<button>Home</button>
+			<button>Projects</button>
+			<button>Games</button>
+		</nav>
+	</header>
+
+	<section class="page about">
+		<section>
+			<p>
+				Hello! My name is Mitchell, I'm an incoming graduate student with a interest in computer graphics.
+			</p>
+		</section>
+
+		<!--
+			<section id="resume">
+				<a href="./resume/">
+					Resume
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+						d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+						d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+			</section>
+		-->
+
+		<section>
+			<h1>Links</h1>
+			<div id="links">
+				<a href="https://discordapp.com/users/232197887218548737" class="circle-link">
+					<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<title>Discord</title>
+						<path
+							d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
+					</svg>
+				</a>
+				<a href="https://github.com/lazergenixdev">
+					<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<title>GitHub</title>
+						<path
+							d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+					</svg>
+				</a>
+				<a href="https://www.linkedin.com/in/mitchell-bizzigotti-7a86862a9">
+				<svg height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+					viewBox="0 0 382 382" xml:space="preserve">
+				<path d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889
+					C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056
+					H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806
+					c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1
+					s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73
+					c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079
+					c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426
+					c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472
+					L341.91,330.654L341.91,330.654z"/>
+				</svg>
+			</a>
+			</div>
+		</section>
+		<!--LinkedIn-->
+		<!--Youtube-->
+		<!--Instagram-->
+		<!---->
+
+		<section>
+			<h1>Contact <span style="font-size: small; color: var(--subtle)">(get in touch or just say hi!)</span></h1>
+			<a href="mailto:contact@lazergenix.dev">contact@lazergenix.dev</a>
+		</section>
+	</section>
+	<section class="page blog">
+		TODO
+	</section>
+	<section class="page home">
+		<footer></footer>
+	</section>
+	<section class="page projects">
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-kailang.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://github.com/lazergenixdev/kai-compiler">
+					<h3>Kai Compiler</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>Header only scripting language compiler written in C</p>
+			</div>
 		</div>
-    </header>
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-fission.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://github.com/lazergenixdev/Fission">
+					<h3>Fission</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>Cross-Platform C++/Vulkan game framework</p>
+			</div>
+		</div>
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-pathtracer.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://mbizzigotti.github.io/cse168-showcase/final-project">
+					<h3>Optix Path Tracer</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>A real-time path tracer with Multiple Importance Sampling written using NVIDIA Optix</p>
+			</div>
+		</div>
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-voxelengine.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://github.com/lazergenixdev/First-Voxel-Engine/tree/lod">
+					<h3>Voxel Rendering</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>Voxel rendering engine, multi-threaded, written in C++/Vulkan</p>
+			</div>
+		</div>
+		<div class="project">
+			<div class="image-corners">
+				<img src="/data/images/thumb-ytmm.jpg">
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+			<div class="content">
+				<a href="https://github.com/lazergenixdev/ytmm">
+					<h3>Youtube Music Manager</h3>
+					<svg xmlns="http://www.w3.org/2000/svg" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd"
+							d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+						<path fill-rule="evenodd"
+							d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+					</svg>
+				</a>
+				<p>Python module for managing a database of songs and playlists</p>
+			</div>
+		</div>
+	</section>
+	<section class="page games">
+		<a href="/games/snake/">snake</a>
+	</section>
 
-	<main>
-		<h1 style="text-align: center;">🚧 WIP 🚧</h1>
-	</main>
+	<script>
+		const hash = window.location.hash.slice(1); // remove the '#'
+		
 
-    <footer>
-    </footer>
+		const buttons = document.querySelectorAll("nav button");
+		buttons.forEach((btn, index) => {
+			btn.addEventListener("click", (event) => {
+				goTo(event.currentTarget); // pass the button itself
+			});
+		});
 
-	<script type="module">
-		"use strict";
+		const pages = document.querySelectorAll('.page');
+		let current = 2;
+		{
+			const value = localStorage.getItem("current-page");
+			if (value) {
+				current = parseInt(value);
+			}
+		}
+		buttons[current].style.setProperty("--nav-underline-width", "100%");
 
-		const footer = document.querySelector("footer");
-		footer.innerText = localStorage.getItem("last_updated_date");
-		const url = "https://api.github.com/repos/lazergenixdev/lazergenix.dev/commits?per_page=1";
-		const response = await fetch(url, { headers: {"Accept": "application/vnd.github+json"} });
-
-		if (!response.ok) {
-			throw Error(`fetching commits: ${response.status}`);
+		// Position pages: left=-100%, current=0, right=+100%
+		function layoutPages(targetIndex = current) {
+			pages.forEach((p, i) => {
+				p.style.transition = 'none';
+				if (i < targetIndex) p.style.transform = 'translateX(-100%)';
+				else if (i === targetIndex) p.style.transform = 'translateX(0)';
+				else p.style.transform = 'translateX(100%)';
+				p.style.zIndex = (i === targetIndex) ? 2 : 0;
+			});
 		}
 
-		const commit_data = await response.json();
-		const date = new Date(commit_data[0].commit.author.date);
+		function goTo(button) {
+			const buttons = Array.from(document.querySelectorAll("nav button"));
+			const index = buttons.indexOf(button); // find its index
+			if (index === current) return;
+			localStorage.setItem("current-page", index);
+			buttons[current].style.removeProperty("--nav-underline-width");
+			button.style.setProperty("--nav-underline-width", "100%");
+			setNavButtonsEnabled(false);
+			const direction = index > current ? 1 : -1;
+			const curr = pages[current];
+			const next = pages[index];
 
-		footer.innerText = "Last updated on " + date.toLocaleString();
-		localStorage.setItem("last_updated_date", footer.innerText);
+			// Place next page immediately left or right
+			next.style.transition = 'none';
+			next.style.transform = `translateX(${direction * 100}%)`;
+			next.style.zIndex = 3;
+
+			// Force reflow so browser picks up start position
+			void next.offsetWidth;
+
+			// Animate
+			curr.style.transition = 'transform 0.25s ease-in-out';
+			next.style.transition = 'transform 0.25s ease-in-out';
+
+			curr.style.transform = `translateX(${-direction * 100}%)`;
+			next.style.transform = 'translateX(0)';
+
+			function setNavButtonsEnabled(enabled) {
+				const buttons = document.querySelectorAll('nav button');
+				buttons.forEach(btn => btn.disabled = !enabled);
+			}
+
+			// After transition, reset positions
+			next.addEventListener('transitionend', function handler() {
+				current = index;
+				layoutPages();
+				setNavButtonsEnabled(true);
+				next.removeEventListener('transitionend', handler);
+			}, { once: true });
+		}
+
+		// Initialize
+		layoutPages();
+
+		const theme = {
+			dark: 1,
+			light: 2,
+		};
+		let themeOverride;
+		const auto = document.getElementById("auto-light-dark");
+		const themeToggle = document.getElementById("mode-toggle");
+
+		{
+			const value = localStorage.getItem("color-theme");
+			if (value) {
+				if (theme[value] != getPreferedTheme()) {
+					toggleTheme();
+				}
+				auto.disabled = false;
+			}
+		}
+
+		function getPreferedTheme() {
+			return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? theme.dark : theme.light;
+		}
+
+		function getTheme() {
+			if (themeOverride) {
+				return themeOverride;
+			}
+			return getPreferedTheme();
+		}
+
+		function setTheme(value) {
+			themeOverride = value;
+			if (themeOverride === undefined) {
+				localStorage.removeItem("color-theme");
+				return;
+			}
+			localStorage.setItem("color-theme", value === theme.dark ? "dark" : "light");
+		}
+
+		function toggleTheme() {
+			if (getTheme() == theme.dark) {
+				document.body.classList.remove("dark");
+				document.body.classList.add("light");
+				setTheme(theme.light);
+			} else {
+				document.body.classList.remove("light");
+				document.body.classList.add("dark");
+				setTheme(theme.dark);
+			}
+			auto.disabled = false;
+		}
+
+		// swap sun and moon
+		if (getTheme() == theme.dark) {
+			const slider = document.querySelector(".slider");
+			const sun = slider.children[0];
+			slider.removeChild(slider.children[0]);
+			slider.appendChild(sun);
+		}
+
+		function setAutoThemeSelection() {
+			document.body.classList.remove("light", "dark");
+			if (getTheme() != getPreferedTheme()) {
+				themeToggle.checked = !themeToggle.checked;
+			}
+			setTheme(undefined);
+			auto.disabled = true;
+		}
+
+		const url = "https://api.github.com/repos/lazergenixdev/lazergenix.dev/commits?per_page=1";
+		fetch(url, { headers: { "Accept": "application/vnd.github+json" } })
+			.then((response) => {
+				if (!response.ok) {
+					throw Error(`fetching commits: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((json) => {
+				const footer = document.querySelector("footer");
+				footer.innerText = localStorage.getItem("last-updated-date");
+
+
+				const date = new Date(json[0].commit.author.date);
+
+				footer.innerText = "Last updated on " + date.toLocaleString();
+				localStorage.setItem("last_updated_date", footer.innerText);
+
+			});
+		/*
+		*/
 	</script>
-  </body>
+</body>
+
 </html>
