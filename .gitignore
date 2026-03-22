@@ -1,4 +1,5 @@
 *.json
+!package.json
 *.min.js
 *.wasm
 *.exe

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=0.8">
@@ -16,17 +17,17 @@
 		:root {
 			color-scheme: light dark;
 
-			--light-bg: #FFF;
-			--light-color: #000;
-			--light-subtle: #BBB;
-			--light-switch: #DDD;
+			--lb: #FFF; /* light background color */
+			--lc: #000; /* light color */ 
+			--ls: #BBB; /* light subtle */
+			--lm: #DDD; /* light more subtle */
 
-			--dark-bg: #000;
-			--dark-color: #FFF;
-			--dark-subtle: #444;
-			--dark-switch: #222;
+			--db: #000; /* dark background color */
+			--dc: #FFF; /* dark color */ 
+			--ds: #444; /* dark subtle */
+			--dm: #222; /* dark more subtle */
 
-			--corner-offset: 8px;
+			--co: 8px; /* corner offset */
 		}
 
 		.light {
@@ -35,6 +36,10 @@
 
 		.dark {
 			color-scheme: only dark;
+		}
+
+		.subtle {
+			color: light-dark(var(--ls), var(--ds));
 		}
 
 		.switch {
@@ -54,7 +59,7 @@
 		.slider {
 			position: absolute;
 			inset: 0;
-			background-color: light-dark(var(--light-switch), var(--dark-switch));
+			background-color: light-dark(var(--lm), var(--dm));
 			border-radius: 30px;
 			transition: background 0.4s ease;
 			display: flex;
@@ -72,7 +77,7 @@
 			width: 20px;
 			left: 6px;
 			bottom: 5px;
-			background-color: light-dark(var(--light-bg), var(--dark-bg));
+			background-color: light-dark(var(--lb), var(--db));
 			border-radius: 50%;
 			transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
 			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -89,8 +94,8 @@
 		}
 
 		#auto-light-dark {
-			color: light-dark(var(--light-color), var(--dark-color));
-			background-color: light-dark(var(--light-bg), var(--dark-bg));
+			color: light-dark(var(--lc), var(--dc));
+			background-color: light-dark(var(--lb), var(--db));
 			border: none;
 			border-radius: 32px;
 		}
@@ -132,8 +137,8 @@
 		}
 
 		body {
-			background-color: light-dark(var(--light-bg), var(--dark-bg));
-			color: light-dark(var(--light-color), var(--dark-color));
+			background-color: light-dark(var(--lb), var(--db));
+			color: light-dark(var(--lc), var(--dc));
 			margin: 0;
 			font-family: 'Fira Code', monospace;
 			font-optical-sizing: auto;
@@ -159,32 +164,38 @@
 			}
 		}
 
-		@media screen and (width < 800px) {
+		@media screen and (width < 700px) {
 			main {
 				max-width: 400px;
 				margin: 40px auto 0 auto;
 				padding: 0 1rem;
 			}
+
 			.project {
 				flex-direction: column;
 				align-items: center;
 				justify-items: center;
 			}
+
 			.content {
 				padding: 0;
 				display: flex;
 				flex-direction: column;
 			}
+
 			.content a {
 				text-align: center;
 			}
+
 			h3 {
 				text-align: center;
 			}
+
 			.image-corners {
 				width: fit-content;
 			}
 		}
+
 		@media screen and (width < 800px) {
 			header {
 				margin-top: 48px;
@@ -193,7 +204,7 @@
 
 		nav button {
 			font-family: 'Fira Code', monospace;
-			color: light-dark(var(--light-color), var(--dark-color));
+			color: light-dark(var(--lc), var(--dc));
 			background-color: transparent;
 			position: relative;
 			padding: 10px 20px;
@@ -207,7 +218,7 @@
 		nav button::after {
 			content: "";
 			/* Bar color */
-			background-color: light-dark(var(--light-color), var(--dark-color));
+			background-color: light-dark(var(--lc), var(--dc));
 			position: absolute;
 			bottom: 0;
 			left: 0;
@@ -237,14 +248,14 @@
 		}
 
 		.page {
-			overflow: hidden; /* ensures children can’t expand width */
+			overflow: hidden;
+			/* ensures children can’t expand width */
 			position: absolute;
 			top: 10.0rem;
 			left: 0;
 			width: 100%;
 			padding-left: 5%;
 			padding-right: 5%;
-			transition: transform 0.25s ease-in-out;
 			z-index: 0;
 		}
 
@@ -266,8 +277,8 @@
 		}
 
 		.projects h3 {
-			background-color: light-dark(var(--light-color), var(--dark-color));
-			color: light-dark(var(--light-bg), var(--dark-bg));
+			background-color: light-dark(var(--lc), var(--dc));
+			color: light-dark(var(--lb), var(--db));
 			width: fit-content;
 			padding: 2px 4px;
 			display: inline-block;
@@ -307,38 +318,38 @@
 			width: 30px;
 			/* length of corner lines */
 			height: 30px;
-			border: 3px solid light-dark(var(--light-color), var(--dark-color));
+			border: 3px solid light-dark(var(--lc), var(--dc));
 			/* border thickness + color */
 		}
 
 		/* Top-left */
 		.image-corners .corner-tl {
-			top: calc(0px - var(--corner-offset));
-			left: calc(0px - var(--corner-offset));
+			top: calc(0px - var(--co));
+			left: calc(0px - var(--co));
 			border-right: none;
 			border-bottom: none;
 		}
 
 		/* Top-right */
 		.image-corners .corner-tr {
-			top: calc(0px - var(--corner-offset));
-			right: calc(0px - var(--corner-offset));
+			top: calc(0px - var(--co));
+			right: calc(0px - var(--co));
 			border-left: none;
 			border-bottom: none;
 		}
 
 		/* Bottom-left */
 		.image-corners .corner-bl {
-			bottom: calc(0px - var(--corner-offset));
-			left: calc(0px - var(--corner-offset));
+			bottom: calc(0px - var(--co));
+			left: calc(0px - var(--co));
 			border-right: none;
 			border-top: none;
 		}
 
 		/* Bottom-right */
 		.image-corners .corner-br {
-			bottom: calc(0px - var(--corner-offset));
-			right: calc(0px - var(--corner-offset));
+			bottom: calc(0px - var(--co));
+			right: calc(0px - var(--co));
 			border-left: none;
 			border-top: none;
 		}
@@ -351,6 +362,7 @@
 		.about h1 {
 			font-size: 1.5rem;
 		}
+
 		*,
 		*::before,
 		*::after {
@@ -363,7 +375,7 @@
 	<header>
 		<div id="theme-selection">
 			<label class="switch">
-				<input type="checkbox" id="mode-toggle" onclick="toggleTheme()">
+				<input type="checkbox" id="mode-toggle">
 				<span class="slider">
 					<svg class="icon sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
 						<path
@@ -375,7 +387,7 @@
 					</svg>
 				</span>
 			</label>
-			<button id="auto-light-dark" disabled onclick="setAutoThemeSelection()">
+			<button id="auto-light-dark" disabled>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
 					<path
 						d="M440-200q52 0 99-21t81-60q-128-8-214-99.5T320-600q0-13 1-25.5t3-24.5q-57 32-90.5 88T200-440q0 100 70 170t170 70m0 80q-134 0-227-93t-93-227 93-227 227-93q5 0 10 .5t10 .5q-29 32-44.5 73T400-600q0 100 70 170t170 70q31 0 60.5-7.5T756-390q-18 118-108 194t-208 76m112-400 128-360h80l128 360h-76l-28-80H656l-28 80zm122-134h92l-46-146zM407-381" />
@@ -397,7 +409,8 @@
 	<section class="page about">
 		<section>
 			<p>
-				Hello! My name is Mitchell, I'm an incoming graduate student with a interest in computer graphics.
+				Hello! My name is Mitchell, I am a graduate student at UCSD with a interests in
+				Computer Graphics, Compilers, Computer Architecture and Computer Animation. I'm sure I will add more to this later! An image would be nice.
 			</p>
 		</section>
 
@@ -429,35 +442,30 @@
 					<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 						<title>GitHub</title>
 						<path
-							d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+						d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
 					</svg>
 				</a>
 				<a href="https://www.linkedin.com/in/mitchell-bizzigotti-7a86862a9">
-				<svg height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-					viewBox="0 0 382 382" xml:space="preserve">
-				<path d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889
-					C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056
-					H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806
-					c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1
-					s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73
-					c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079
-					c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426
-					c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472
-					L341.91,330.654L341.91,330.654z"/>
-				</svg>
-			</a>
+					<svg height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+					xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 382 382" xml:space="preserve">
+						<title>LinkedIn</title>
+						<path d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472L341.91,330.654L341.91,330.654z" />
+					</svg>
+				</a>
 			</div>
+			<p><a href="./resume/">Resume</a> <span style="font-size: small;">(<a href="./resume/">HTML</a> | <a href="TODO">PDF</a> | <a href="TODO">Printer Friendly</a>)</span></p>
 			<!--Youtube-->
 			<!--Instagram-->
 		</section>
 
 		<section>
-			<h1>Contact <span style="font-size: small; color: light-dark(var(--light-subtle), var(--dark-subtle))">(get in touch or just say hi!)</span></h1>
+			<h1>Contact <span class="subtle" style="font-size: small;">(get
+					in touch or just say hi!)</span></h1>
 			<a href="mailto:contact@lazergenix.dev">contact@lazergenix.dev</a>
 		</section>
 	</section>
 	<section class="page blog">
-		TODO
+		Nothing yet!
 	</section>
 	<section class="page home">
 		<footer></footer>
@@ -570,10 +578,11 @@
 		</div>
 	</section>
 	<section class="page games">
-		<a href="/games/snake/">snake</a>
+		<p>Games that are packed into a single HTML file! (WIP)</p>
+		<a href="/games/snake/">snake</a><span class="subtle"> (21 KB)</span>
 	</section>
 
-	<script>
+	<script type="module">
 		const hash = window.location.hash.slice(1); // remove the '#'
 
 
@@ -657,6 +666,9 @@
 		const auto = document.getElementById("auto-light-dark");
 		const themeToggle = document.getElementById("mode-toggle");
 
+		themeToggle.addEventListener("click", toggleTheme);
+		auto.addEventListener("click", setAutoThemeSelection);
+
 		{
 			const value = localStorage.getItem("color-theme");
 			if (value) {
@@ -687,7 +699,7 @@
 			localStorage.setItem("color-theme", value === theme.dark ? "dark" : "light");
 		}
 
-		function toggleTheme() {
+		export function toggleTheme() {
 			if (getTheme() == theme.dark) {
 				document.body.classList.remove("dark");
 				document.body.classList.add("light");
@@ -728,16 +740,10 @@
 			.then((json) => {
 				const footer = document.querySelector("footer");
 				footer.innerText = localStorage.getItem("last-updated-date");
-
-
 				const date = new Date(json[0].commit.author.date);
-
 				footer.innerText = "Last updated on " + date.toLocaleString();
-				localStorage.setItem("last_updated_date", footer.innerText);
-
+				localStorage.setItem("last-updated-date", footer.innerText);
 			});
-		/*
-		*/
 	</script>
 </body>
 

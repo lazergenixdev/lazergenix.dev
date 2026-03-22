@@ -9,6 +9,7 @@ foreign {
 	wgpu_pipeline_create :: proc(id: string) -> RenderPipeline ---
 	wgpu_draw :: proc(vertexCount: u32, instanceCount := 1, firstVertex := 0, firstInstance := 0) ---
 	wgpu_draw_indexed :: proc(indexCount: u32, instanceCount := 1, firstIndex := 0, baseVertex := 0, firstInstance := 0) ---
+	// NOTE: set_index: which bind group set layout to use from pipeline
 	wgpu_bind_group_create :: proc(pipeline: RenderPipeline, set_index: int, bindings: [] Binding) -> BindGroup ---
 	wgpu_bind_pipeline :: proc(pipeline: RenderPipeline) ---
 	wgpu_bind_bind_group :: proc(set_index: int, bind_group: BindGroup) ---
@@ -34,8 +35,6 @@ Binding :: struct {
 
 Flags :: u32
 StringView :: string
-
-STRLEN :: transmute(int)(max(uint))
 
 Adapter :: distinct rawptr
 BindGroup :: distinct rawptr

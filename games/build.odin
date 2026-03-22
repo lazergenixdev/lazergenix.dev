@@ -213,40 +213,45 @@ run :: proc(command: string)
 
 run_command :: proc(command: string) -> (success: bool)
 {
-	using windows;
-    si: STARTUPINFOW;
-    pi: PROCESS_INFORMATION;
-    exit_code: DWORD;
+	when (ODIN_OS == .Windows) {
+		using windows;
+		si: STARTUPINFOW;
+		pi: PROCESS_INFORMATION;
+		exit_code: DWORD;
+		
+		si.cb = size_of(si);
+		si.dwFlags = STARTF_USESTDHANDLES;
+		
+		// Inherit current stdout/stderr/stdin
+		si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+		si.hStdError  = GetStdHandle(STD_ERROR_HANDLE);
+		si.hStdInput  = GetStdHandle(STD_INPUT_HANDLE);
+		
+		// Command to run (must be writable string for CreateProcessA)
+		cmd := to_cstring16(command);
+		
+		if !CreateProcessW(nil, cmd, nil, nil, TRUE, 0, nil, nil, &si, &pi) {
+			fmt.printf("CreateProcess failed ({}) {}\n", GetLastError(), command);
+			return false;
+		}
+		
+		// Wait until process finishes
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		
+		// Get its exit code
+		if !GetExitCodeProcess(pi.hProcess, &exit_code) {
+			fmt.printf(":: Failed to get exit code ({})\n", GetLastError());
+		}
+		
+		// Close handles
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
 
-    si.cb = size_of(si);
-    si.dwFlags = STARTF_USESTDHANDLES;
-
-    // Inherit current stdout/stderr/stdin
-    si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-    si.hStdError  = GetStdHandle(STD_ERROR_HANDLE);
-    si.hStdInput  = GetStdHandle(STD_INPUT_HANDLE);
-
-    // Command to run (must be writable string for CreateProcessA)
-    cmd := to_cstring16(command);
-
-    if !CreateProcessW(nil, cmd, nil, nil, TRUE, 0, nil, nil, &si, &pi) {
-        fmt.printf("CreateProcess failed ({}) {}\n", GetLastError(), command);
-        return false;
-    }
-
-    // Wait until process finishes
-    WaitForSingleObject(pi.hProcess, INFINITE);
-
-    // Get its exit code
-    if !GetExitCodeProcess(pi.hProcess, &exit_code) {
-		fmt.printf(":: Failed to get exit code ({})\n", GetLastError());
-    }
-	
-    // Close handles
-    CloseHandle(pi.hProcess);
-    CloseHandle(pi.hThread);
-
-	return exit_code == 0;
+		return exit_code == 0;
+	}
+	else {
+		return libc.system(strings.clone_to_cstring(command)) == 0;
+	}
 }
 
 to_cstring16 :: proc(str: string) -> [^] u16
