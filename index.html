@@ -271,7 +271,7 @@
 			text-align: center;
 			margin: 0 auto;
 			margin-top: 100px;
-			margin-bottom: 10px;
+			margin-bottom: 50px;
 		}
 
 		.home {
@@ -678,6 +678,7 @@
 				else if (i === targetIndex) p.style.transform = 'translateX(0)';
 				else p.style.transform = 'translateX(100%)';
 				p.style.zIndex = (i === targetIndex) ? 2 : 0;
+				p.style.display = (i === targetIndex) ? "block" : "none";
 			});
 		}
 
@@ -692,6 +693,8 @@
 			const direction = index > current ? 1 : -1;
 			const curr = pages[current];
 			const next = pages[index];
+
+			next.style.display = "block";
 
 			// Place next page immediately left or right
 			next.style.transition = 'none';
