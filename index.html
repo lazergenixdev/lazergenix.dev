@@ -19,11 +19,13 @@
 
 			--lb: #FFF; /* light background color */
 			--lc: #000; /* light color */ 
+			--l2: #222; /* light secondary */
 			--ls: #BBB; /* light subtle */
 			--lm: #DDD; /* light more subtle */
 
 			--db: #000; /* dark background color */
 			--dc: #FFF; /* dark color */ 
+			--d2: #DDD; /* dark secondary */
 			--ds: #444; /* dark subtle */
 			--dm: #222; /* dark more subtle */
 
@@ -272,6 +274,46 @@
 			margin-bottom: 10px;
 		}
 
+		.home {
+			margin: 0 auto;
+		}
+		
+		.home .gallery {
+			column-count: 3;
+			column-gap: 6px;
+			margin: 10px;
+		}
+
+		.home .gallery figure {
+			padding: 0;
+			margin: 0;
+			font-size: small;
+			break-inside: avoid;
+			margin-bottom: 6px;
+		}
+
+		.home .gallery figcaption {
+			color: light-dark(var(--l2), var(--d2));
+			padding: 0 0;
+			display: none;
+		}
+
+		.home .gallery img {
+			width: 100%;
+		}
+
+		@media (max-width: 1000px) {
+			.home .gallery {
+				column-count: 2;
+			}
+		}
+
+		@media (max-width: 500px) {
+			.home .gallery {
+				column-count: 1;
+			}
+		}
+
 		.projects {
 			padding-left: 10%;
 			padding-right: 10%;
@@ -360,10 +402,6 @@
 			height: 24px;
 		}
 
-		.about h1 {
-			font-size: 1.5rem;
-		}
-
 		*,
 		*::before,
 		*::after {
@@ -430,7 +468,7 @@
 		-->
 
 		<section>
-			<h1>Links</h1>
+			<h2>Links</h2>
 			<div id="links">
 				<a href="https://discordapp.com/users/232197887218548737" class="circle-link">
 					<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -463,8 +501,10 @@
 		</section>
 
 		<section>
-			<h1>Contact <span class="subtle" style="font-size: small;">(get
-					in touch or just say hi!)</span></h1>
+			<h2>
+				Contact
+				<span class="subtle" style="font-size: small;">(get in touch or just say hi!)</span>
+			</h2>
 			<a href="mailto:contact@lazergenix.dev">contact@lazergenix.dev</a>
 		</section>
 	</section>
@@ -472,6 +512,39 @@
 		Nothing yet!
 	</section>
 	<section class="page home">
+		<div>
+			<h2>Render Gallery</h2>
+			<div class="gallery image-corners">
+				<figure>
+					<img src="data/images/gallery/gpu_sharky_70222spp_cropped.webp" alt="UCSD CSE 272: Vulkan Path Tracer Demo Scene"/>
+					<figcaption>2026, UCSD CSE 272: Vulkan Path Tracer</figcaption>
+				</figure>
+				<figure>
+					<img src="data/images/gallery/gpu_vol_sharky_102654spp_cropped.webp" alt="UCSD CSE 272: Vulkan Volume Path Tracer Demo Scene"/>
+					<figcaption>2026, UCSD CSE 272: Vulkan Volume Path Tracer</figcaption>
+				</figure>
+				<figure>
+					<img src="data/images/gallery/ucsd_cse_bear_modern.webp" alt="UCSD CSE 168: OptiX Path Tracer, CSE Bear"/>
+					<figcaption>2025, UCSD CSE 168: OptiX Path Tracer, CSE Bear</figcaption>
+				</figure>
+				<figure>
+					<img src="data/images/gallery/P1.webp" alt="UCSD CSE 168: OptiX Path Tracer, McLaren P1"/>
+					<figcaption>2025, UCSD CSE 168: OptiX Path Tracer, McLaren P1</figcaption>
+				</figure>
+				<figure>
+					<img src="data/images/gallery/shark.webp" alt='UCSD CSE 168: OptiX Path Tracer, "Tralalero Tralala"'/>
+					<figcaption>2025, UCSD CSE 168: OptiX Path Tracer, "Tralalero Tralala"</figcaption>
+				</figure>
+				<figure>
+					<img src="data/images/gallery/mclarenf1.webp" alt="UCSD CSE 168: OptiX Path Tracer, McLaren F1"/>
+					<figcaption>2025, UCSD CSE 168: OptiX Path Tracer, McLaren F1</figcaption>
+				</figure>
+				<span class="corner-tl"></span>
+				<span class="corner-tr"></span>
+				<span class="corner-bl"></span>
+				<span class="corner-br"></span>
+			</div>
+		</div>
 		<footer></footer>
 	</section>
 	<section class="page projects">
@@ -479,8 +552,6 @@
 			<div class="image-corners">
 				<img src="/data/images/thumb-kailang.jpg">
 				<span class="corner-tl"></span>
-				<span class="corner-tr"></span>
-				<span class="corner-bl"></span>
 				<span class="corner-br"></span>
 			</div>
 			<div class="content">
@@ -500,8 +571,6 @@
 			<div class="image-corners">
 				<img src="/data/images/thumb-fission.jpg">
 				<span class="corner-tl"></span>
-				<span class="corner-tr"></span>
-				<span class="corner-bl"></span>
 				<span class="corner-br"></span>
 			</div>
 			<div class="content">
@@ -521,8 +590,6 @@
 			<div class="image-corners">
 				<img src="/data/images/thumb-pathtracer.jpg">
 				<span class="corner-tl"></span>
-				<span class="corner-tr"></span>
-				<span class="corner-bl"></span>
 				<span class="corner-br"></span>
 			</div>
 			<div class="content">
@@ -542,8 +609,6 @@
 			<div class="image-corners">
 				<img src="/data/images/thumb-voxelengine.jpg">
 				<span class="corner-tl"></span>
-				<span class="corner-tr"></span>
-				<span class="corner-bl"></span>
 				<span class="corner-br"></span>
 			</div>
 			<div class="content">
@@ -563,8 +628,6 @@
 			<div class="image-corners">
 				<img src="/data/images/thumb-ytmm.jpg">
 				<span class="corner-tl"></span>
-				<span class="corner-tr"></span>
-				<span class="corner-bl"></span>
 				<span class="corner-br"></span>
 			</div>
 			<div class="content">
