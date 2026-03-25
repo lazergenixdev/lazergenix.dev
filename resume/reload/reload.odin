@@ -21,14 +21,6 @@ rebuild_urself :: proc(flags: bit_set[Options] = nil, source_location := #caller
 
     binary_path := os.args[0];
     when DEBUG { fmt.printfln("binary_path = \"{}\"", binary_path) }
-    
-    when ODIN_OS == .Windows {
-        // On Windows executables almost always invoked without extension, so
-        // it's ./nob, not ./nob.exe. For renaming the extension is a must.
-    //    if (!nob_sv_ends_with_cstr(nob_sv_from_cstr(binary_path), ".exe")) {
-    //        binary_path = nob_temp_sprintf("%s.exe", binary_path);
-    //    }
-    }
 
     source_path := source_location.file_path;
     when DEBUG { fmt.printfln("source_path = \"{}\"", source_path) }
