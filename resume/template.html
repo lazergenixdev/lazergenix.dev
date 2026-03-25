@@ -23,6 +23,7 @@
         .small { font-size: small; }
         .icon { width: 1em; height: auto; }
         .proj { font-weight: bold; }
+        .empty { margin: 0.3rem 0; }
         .text-with-icon { display: flex; align-items: center; justify-content: center; gap: 0.25em; }
         @media print {
             .no-print { display: none !important; }
@@ -98,110 +99,12 @@
     <section>
         <h2>Projects</h2>
 
-        <div class="columns">
-            <div><a class="proj" href="https://github.com/lazergenixdev/kai-compiler">Kai Scripting Language</a>, <i>C</i></div>
-            <!--<a class="pl" href="https://github.com/lazergenixdev/kai-compiler">github.com/lazergenixdev/kai-compiler</a>-->
-        </div>
-        <p>
-            Designed an open-source performance-oriented AOT scripting language in C with zero dependencies to target real-time systems.
-            Built a custom bytecode interpreter to support compile-time code execution and enable advanced metaprogramming features.
-            Utilized arena allocation strategy to decrease total compilation speed, resulting in a 2x speed up in parsing.
-        </p>
-        
-        <div class="columns">
-            <div><b>Pipelined Out-of-Order Processor</b>, <i>SystemVerilog</i></div>
-        </div>
-        <p>
-            Worked in a team of 2 to design, test, and implement a modern MIPS processor using SystemVerilog in a Linux environment with Verilator.
-            Implemented out-of-order execution with register renaming to increase IPC by up to 50%.
-            Designed a custom non-blocking data cache to increase memory throughput.
-        </p>
-
-        <div class="columns">
-            <div><a class="proj" href="https://mbizzigotti.github.io/wi25-cse169-proj5">SPH Fluid Simulation</a>, <i>Javascript, WebGPU</i></div>
-            <!--<a class="pl" href="https://mbizzigotti.github.io/wi25-cse169-proj5">mbizzigotti.github.io/wi25-cse169-proj5</a>-->
-        </div>
-        <p>
-            Implemented particle-based physics models with neighbor searching, force calculation, and semi-implicit euler integration to estimate real fluid behavior.
-            Leveraged modern GPU compute capabilities through WebGPU compute shaders to simulate and render thousands of fluid particles interactively.
-            Optimized simulation performance by minimizing memory transfers to enable real-time performance.
-        </p>
-        
-        <div class="columns">
-            <div><a class="proj" href="https://github.com/lazergenixdev/First-Voxel-Engine">Voxel Rendering Engine</a>, <i>C++</i></div>
-            <!--<a class="pl" href="https://github.com/lazergenixdev/First-Voxel-Engine">github.com/lazergenixdev/First-Voxel-Engine</a>-->
-        </div>
-        <p>
-            Developed a dynamic multi-threaded chunk remeshing system to optimize terrain updates without blocking the render thread using the Vulkan graphics API.
-            Implemented level-of-detail voxel streaming to allow more than 100x the draw distances.
-            Integrated greedy meshing algorithm to decrease cost of CPU to GPU data transfer.
-        </p>
-
-        <div class="columns">
-            <div><a class="proj" href="https://github.com/lazergenixdev/Fission">Fission: Cross-Platform Game Framework</a>, <i>C++</i></div>
-            <!--<a class="pl" href="https://github.com/lazergenixdev/Fission">github.com/lazergenixdev/Fission</a>-->
-        </div>
-        <p>
-            Developed a cross-platform Vulkan game framework over 4+ years, to enable efficient application creation.
-            Maintained a custom “in-house” build pipeline to support compilation across varied platforms (Windows, MacOS, Android) and toolchains (MSVC, Clang, GCC).
-        </p>
-      
-        <div class="columns">
-            <div><b>Automatic T-Shirt Folder</b>, <i>C</i></div>
-        </div>
-        <p>
-            Worked on a team of 4 students to create a design, test, and build an automated T-shirt folder.
-            Programmed the software to work with our hardware setup to control each motor.
-        </p>
-
-        <div class="columns">
-            <div><b>YT Music Manager</b>, <i>Python</i></div>
-        </div>
-        <p>
-            Designed a user database system in Python for efficient music organization/synchronization.
-            Implemented continuous integration workflows on GitHub to automatically build and deploy binaries on each push.
-        </p>
-
-        <div class="columns">
-            <div><a class="proj" href="https://mbizzigotti.github.io/cse168-showcase/final-project">Real-time Path Tracer</a>, <i>CUDA, C++</i></div>
-            <!--<a class="pl" href="https://mbizzigotti.github.io/cse168-showcase/final-project">mbizzigotti.github.io/cse168-showcase/final-project</a>-->
-        </div>
-        <p>
-            Developed Multiple Importance Sampling path tracer using OptiX (CUDA) to enable real-time rendering.
-            Implemented BVH acceleration structures to optimize ray-scene intersection performance.
-            Used stratified sampling and quasi-random sequences to improve convergence.
-        </p>
-
-        <div class="columns">
-            <div><a class="proj" href="https://mbizzigotti.github.io/wi25-cse169-proj4">Cloth Simulation</a>, <i>Odin</i></div>
-            <!--<a class="pl" href="https://mbizzigotti.github.io/wi25-cse169-proj4">mbizzigotti.github.io/wi25-cse169-proj4</a>-->
-        </div>
-        <p>
-            Implemented a software physics system using symplectic euler integration with WebGL as the rendering backend to create a real-time cloth physics simulation.
-        </p>
-
-        <div class="columns">
-            <div><b>LLVM: Custom RISC-V Backend</b>, <i>C++</i></div>
-        </div>
-        <p>
-            Successfully modified LLVM RISC-V backend to generate code for a new experimental branching technique.
-            Learned how to effectively apply LLVM tools and test programs to debug a variaty of compiler issues.
-        </p>
+        <!-- Projects -->
     </section>
     <section>
         <h2>Skills</h2>
-        <div class="columns">
-            <div><b>Programming</b></div>
-            <div>C++, C, Python, x86, ARM, CUDA, MATLAB, bash, HTML, Javascript, CSS</div>
-        </div>
-        <div class="columns">
-            <div><b>Programming Tools</b></div>
-            <div>git, lldb/gdb, Makefiles, CMake, Linux</div>
-        </div>
-        <div class="columns">
-            <div><b>Graphics Tools</b></div>
-            <div>Vulkan, DirectX, OpenGL, WebGPU, Slang, Unreal Engine 5, Blender</div>
-        </div>
+
+        <!-- Skills -->
     </section>
 </main>
 
