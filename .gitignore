@@ -1,7 +1,12 @@
+.DS_Store
+
 *.json
 !package.json
 *.min.js
 *.wasm
 *.exe
+*.old
 *.wgsl
 *.temp.html
+
+resume/generated/

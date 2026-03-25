@@ -1,6 +1,6 @@
 // Generate Resume
-// build :: odin build . -out:gen
-// run   :: ./gen
+// build :: odin build . -out:gen.exe
+// run   :: ./gen.exe
 package main;
 
 import "core:os"
@@ -13,7 +13,7 @@ import "print"
 
 resumes :: [] Resume {
     {
-        name = "all",
+        name = "index",
         projects = {
             { projects.llvm, true },
             { projects.kai, true },
@@ -43,6 +43,32 @@ resumes :: [] Resume {
     },
     {
         name = "qualcomm",
+        projects = {
+            { projects.llvm, true },
+            { projects.kai, true },
+            { projects.ooo, true },
+            { projects.voxel, true },
+            { projects.fission, true },
+            //{ projects.shirt, true },
+            { projects.ytmm, true },
+            { projects.optix, false },
+            { projects.fluid, false },
+            { projects.cloth, false },
+        },
+        skills = {
+            {
+                category = "Programming",
+                items = {"C++", "C", "Python", "x86", "ARM", "CUDA", "MATLAB", "bash", "HTML", "Javascript", "CSS"},
+            },
+            {
+                category = "Programming Tools",
+                items = {"git", "lldb/gdb", "Makefiles", "CMake", "Linux"},
+            },
+            {
+                category = "Graphics Tools",
+                items = {"Vulkan", "DirectX", "OpenGL", "WebGPU", "Slang", "Unreal Engine 5", "Blender"},
+            }
+        }
     }
 }
 
@@ -60,6 +86,12 @@ Skill :: struct {
 main :: proc()
 {
     if !reload.rebuild_urself({.Quit_On_Build_Failed}) { return }
+
+    err := os.make_directory("generated");
+    if err != nil && err != .Exist {
+        print.error("Failed to created directory " + print.STRING + " ({})", err);
+        return;
+    }
 
     resume := resumes[0];
     resume_map := make(map[string] Resume);
@@ -90,9 +122,9 @@ main :: proc()
     }
 
     output := fmt.aprintf("{}.html", resume.name);
-    //if resume.name == "all" {
-    //    output = "index.html";
-    //}
+    if resume.name != "index" {
+        output = strings.concatenate({"generated/", output});
+    }
 
     for {
         inputs := reload.gather_all_html();

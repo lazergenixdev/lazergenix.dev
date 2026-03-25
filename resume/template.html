@@ -4,19 +4,16 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Resume - Mitchell Bizzigotti</title>
+	<title>Mitchell Bizzigotti</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
 	<style>
         html { font-family: Georgia, Times, 'Times New Roman', serif; font-size: 0.9rem; }
-        body { max-width: 210mm; margin: 3rem auto; padding: 0 2rem; }
+        body { max-width: 210mm; margin: 3rem auto; padding: 0 4rem; }
         hr { border: none; margin-top: 1px; margin-bottom: 2px; }
         p { margin-top: 0.5em; }
         h2 { font-size: 1.4em; margin-top: 0.5em; margin-bottom: 0.25em; }
         a { color: rgb(21, 115, 158); }
-        @media (min-width: 160mm) {
-            .columns { display: flex; justify-content: space-between; align-items: baseline; gap: 1em; }
-            body { padding: 0 4rem; }
-        }
+        .columns { display: flex; justify-content: space-between; align-items: baseline; gap: 1em; }
         .head { display: flex; justify-content: space-between; align-items: baseline; gap: 1em; }
         .name { font-size: 2em; font-weight: bold; }
         .pl { text-decoration: underline; }
@@ -25,6 +22,10 @@
         .proj { font-weight: bold; }
         .empty { margin: 0.3rem 0; }
         .text-with-icon { display: flex; align-items: center; justify-content: center; gap: 0.25em; }
+        @media (max-width: 160mm) {
+            body { padding: 0 2rem; }
+            .columns { display: block; margin-bottom: 10px; }
+        }
         @media print {
             .no-print { display: none !important; }
             body { margin: 1rem auto; padding: 0 2rem; }
@@ -37,7 +38,7 @@
 <header>
     <div class="head">
         <span class="name">Mitchell Bizzigotti</span>
-        <span class="no-print small"><a href="example.com">PDF</a></span>
+        <span class="no-print small"><a href="./Mitchell_Bizzigotti_resume.pdf">PDF</a></span>
     </div>
     <hr style="border-top: solid rgb(25, 109, 148) 3px;">
     <div class="columns">
