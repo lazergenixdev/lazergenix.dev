@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wdth@75&display=swap" rel="stylesheet">
+  
+	<title>GPUs love triangles, not circles</title>
+	<style>
+        @import url(https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css);
+        
+        /* Light/Dark mode */
+        :root {
+            color-scheme: light dark;
+    
+            --lb: #FFF; /* light background color */
+            --lc: #000; /* light color */ 
+            --ls: #BBB; /* light subtle */
+            --lm: #DDD; /* light more subtle */
+
+            --db: #000; /* dark background color */
+            --dc: #FFF; /* dark color */ 
+            --ds: #444; /* dark subtle */
+            --dm: #222; /* dark more subtle */
+        }
+        .light { color-scheme: only light; }
+        .dark { color-scheme: only dark; }
+        .subtle { color: light-dark(var(--ls), var(--ds)); }
+    
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        /* Hide checkbox */
+        .switch input {
+            display: none;
+        }
+    
+        /* Slider track */
+        .slider {
+            position: absolute;
+            inset: 0;
+            background-color: light-dark(var(--lm), var(--dm));
+            border-radius: 30px;
+            transition: background 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6px;
+            font-size: 14px;
+        }
+
+        /* Circle knob */
+        .slider::before {
+            content: "";
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 6px;
+            bottom: 5px;
+            background-color: light-dark(var(--lb), var(--db));
+            border-radius: 50%;
+            transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        #theme-selection {
+            display: flex;
+            gap: 10px;
+            text-align: left;
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            z-index: 100;
+        }
+
+        #auto-light-dark {
+            color: light-dark(var(--lc), var(--dc));
+            background-color: light-dark(var(--lb), var(--db));
+            border: none;
+            border-radius: 32px;
+        }
+
+        #auto-light-dark:hover:not([disabled]) {
+            color: light-dark(darkgreen, lightgreen);
+            cursor: pointer;
+        }
+
+        #auto-light-dark:disabled {
+            color: transparent;
+            background-color: transparent;
+        }
+
+        /* Icons */
+        .slider .icon { opacity: 1.0; transition: opacity 0.3s ease; }
+        .icon { fill: currentColor; width: 16px; height: 16px; }
+
+        .switch input:checked+.slider::before { transform: translateX(28px); }
+        .switch input:checked+.slider .moon { opacity: 1; }
+        .switch input:checked+.slider .sun { opacity: 1.0; }
+        .switch input:not(:checked)+.slider .sun { opacity: 1; }
+    
+        body {
+            background-color: light-dark(var(--lb), var(--db));
+            color: light-dark(var(--lc), var(--dc));
+            font-family: 'Fira Code', monospace;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            line-height: 1.7;
+        }
+    
+        header { text-align: center; margin-bottom: 3rem; }
+        header p { color: #777; font-size: 0.95rem; }
+        header h1 { margin: 0.3rem 0; font-size: 2.2rem; }
+        article { font-family: 'IBM Plex Sans', sans-serif; }
+        article h2 { margin-top: 2rem; font-size: 1.5rem; }
+        article p { margin: 1rem 0; }
+        footer {
+            margin-top: 4rem;
+            border-top: 1px solid light-dark(var(--lm), var(--dm));
+            padding-top: 1.5rem;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+    
+        a { text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        figcaption { text-align: center; }
+        figure { margin: 0; padding: 8pt; }
+        #figure1 svg { width: 100%; fill: none; stroke: currentColor; stroke-width: 0.01; }
+        #figure5 svg { width: 100%; fill: none; stroke: currentColor; stroke-width: 0.09; }
+        #figure1 { display: flex; }
+        #figure2 { display: flex; flex-direction: column; align-items: center; }
+        #figure2 img { width: fit-content; }
+        .subfigure { display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; }
+        .control { display: flex; align-items: center; gap: 10px; }
+        .grid { width: 1px; height: 1px; stroke: light-dark(var(--ls),var(--ds)); stroke-width: 0.04px; }
+        .sample { r: 0.075px; fill: currentColor; stroke: none; }
+        .triangle { fill: light-dark(#0004,#fff6); }
+        .hit { stroke: rgb(127, 211, 239); }
+        .miss { stroke: rgb(248, 139, 139); }
+    </style>
+</head>
+<body>
+    <header>
+      <div id="theme-selection">
+        <label class="switch">
+          <input type="checkbox" id="mode-toggle" onclick="toggleTheme()">
+          <span class="slider">
+            <svg class="icon sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+              <path
+                d="M480-360q50 0 85-35t35-85-35-85-85-35-85 35-35 85 35 85 85 35m0 80q-83 0-141.5-58.5T280-480t58.5-141.5T480-680t141.5 58.5T680-480t-58.5 141.5T480-280M200-440H40v-80h160zm720 0H760v-80h160zM440-760v-160h80v160zm0 720v-160h80v160zM256-650l-101-97 57-59 96 100zm492 496-97-101 53-55 101 97zm-98-550 97-101 59 57-100 96zM154-212l101-97 55 53-97 101zm326-268" />
+            </svg>
+            <svg class="icon moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+              <path
+                d="M480-120q-150 0-255-105T120-480t105-255 255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120m0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82m-10-270" />
+            </svg>
+          </span>
+        </label>
+        <button id="auto-light-dark" disabled onclick="setAutoThemeSelection()">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+            <path
+              d="M440-200q52 0 99-21t81-60q-128-8-214-99.5T320-600q0-13 1-25.5t3-24.5q-57 32-90.5 88T200-440q0 100 70 170t170 70m0 80q-134 0-227-93t-93-227 93-227 227-93q5 0 10 .5t10 .5q-29 32-44.5 73T400-600q0 100 70 170t170 70q31 0 60.5-7.5T756-390q-18 118-108 194t-208 76m112-400 128-360h80l128 360h-76l-28-80H656l-28 80zm122-134h92l-46-146zM407-381" />
+          </svg>
+        </button>
+      </div>
+      <h1>GPUs love triangles, not circles</h1>
+      <p><a href="/">lazergenix.dev</a> - March 30, 2025</p>
+    </header>
+
+    <article>
+        <p>
+            I believe that it is a generally well understood idea for graphics programmers that increasing vertex count and pixels on the screen will cost in performance. But, did you know that the types of triangles also really matter when it comes to performance? Well, the shape of each triangle actually makes a huge difference <sup><a href="#ref.triangulation">[1]</a></sup>, and I wanted to measure for myself just how much this matters on current graphics hardware! So lets do some performance testing and what better shape to try than a circle? In this article, I will explore the question: What is the best way to draw a circle?
+        </p>
+
+        <h2>Lets triangulate some circles!</h2>
+
+        <p>
+            Okay, so I have 5 methods that I chose to explore for triangulating circles. The first method I call "Naive", because it is the simplest way to create a triangle mesh, and is actually the way that I used to triangulate all circles in my 2D renderer for Fission<sup><a href="#ref.fission">[2]</a></sup>! For Naive, just pick a point as an anchor and go around the circle connecting all the rest of the points. The second method "Fan" is almost the same as Naive, except the anchor point is in the center of the circle, and it costs you 2 extra triangles. The third method is "Strip", where you create a triangle on the very right, and just go back and forth connecting to a vertex above and below, above and below, and so on. What's nice about these first 3 topologies is that they do not require using an index buffer if you use TRIANGLE_FAN or TRIANGLE_STRIP.
+        </p>
+
+        <figure id="figure2">
+            <img src="atlas.png">
+            <figcaption>
+                Screenshot of a triangulated circle from a blog by Atlassian<sup><a href="#ref.atlassian">[4]</a></sup>
+            </figcaption>
+        </figure>
+        <p>
+            The "Quad Fan" method is interesting because as far as I know, this method is not actually documented anywhere. It actually comes from a blog<sup><a href="#ref.atlassian">[4]</a></sup> I saw when trying to find another article. What's funny about this method is that in the article they never bring up this triangulation at all; and in the section where you think they would bring it up, "But how do we display a rounded shape like a circle..." they just show the Fan method! What's even funnier is that they don't even do the triangulation themselves! They just use a 3rd party library to do it for them 😂. Typical web developer, am I right? Those packages aren't going to import themselves! No, but seriously I'm not against using 3rd party libraries and I do so all the time and I probably would have done the same if I were them. So, this forth method ends up being: just draw a quad then fan out the edges to make a circle; at least from what I see on the article's image.
+        </p>
+        <p>
+            The last method "Max Area" comes from an article "Triangulation"<sup><a href="#ref.triangulation">[1]</a></sup> by Humus, where they "start off with an equilateral triangle in the center and then recursively add new triangles along the edge".
+        </p>
+        <p>
+            Here's what all these methods look like side by side:
+        </p>
+
+        <div class="subfigure">
+            <div class="control">
+                <input id="figure1_wireframe" type="checkbox" checked/>
+                <label>Wireframe</label>
+            </div>
+            <div class="control">
+                <input id="figure1_lod" type="range" min="0" max="6" value="2"/>
+                <label>Level of detail</label>
+            </div>
+        </div>
+        <div id="figure1">
+            <figure>
+                <svg id="fig_naive" xmlns="http://www.w3.org/2000/svg" viewBox="-1.01 -1.01 2.02 2.02">
+                    <polygon points="0.866025,0.500000 0.500000,0.866025 1.000000,0.000000"/>
+                    <polygon points="0.500000,0.866025 -0.000000,1.000000 1.000000,0.000000"/>
+                    <polygon points="-0.000000,1.000000 -0.500000,0.866025 1.000000,0.000000"/>
+                    <polygon points="-0.500000,0.866025 -0.866026,0.500000 1.000000,0.000000"/>
+                    <polygon points="-0.866026,0.500000 -1.000000,-0.000000 1.000000,0.000000"/>
+                    <polygon points="-1.000000,-0.000000 -0.866025,-0.500000 1.000000,0.000000"/>
+                    <polygon points="-0.866025,-0.500000 -0.500000,-0.866025 1.000000,0.000000"/>
+                    <polygon points="-0.500000,-0.866025 0.000000,-1.000000 1.000000,0.000000"/>
+                    <polygon points="0.000000,-1.000000 0.500000,-0.866025 1.000000,0.000000"/>
+                    <polygon points="0.500000,-0.866025 0.866026,-0.500000 1.000000,0.000000"/>
+                </svg>
+                <figcaption>Naive</figcaption>   
+            </figure>
+            <figure>
+                <svg id="fig_fan" xmlns="http://www.w3.org/2000/svg" viewBox="-1.01 -1.01 2.02 2.02">
+                    <polygon points="1.000000,0.000000 0.866025,0.500000 0.000000,0.000000"/>
+                    <polygon points="0.866025,0.500000 0.500000,0.866025 0.000000,0.000000"/>
+                    <polygon points="0.500000,0.866025 -0.000000,1.000000 0.000000,0.000000"/>
+                    <polygon points="-0.000000,1.000000 -0.500000,0.866025 0.000000,0.000000"/>
+                    <polygon points="-0.500000,0.866025 -0.866026,0.500000 0.000000,0.000000"/>
+                    <polygon points="-0.866026,0.500000 -1.000000,-0.000000 0.000000,0.000000"/>
+                    <polygon points="-1.000000,-0.000000 -0.866025,-0.500000 0.000000,0.000000"/>
+                    <polygon points="-0.866025,-0.500000 -0.500000,-0.866025 0.000000,0.000000"/>
+                    <polygon points="-0.500000,-0.866025 0.000000,-1.000000 0.000000,0.000000"/>
+                    <polygon points="0.000000,-1.000000 0.500000,-0.866025 0.000000,0.000000"/>
+                    <polygon points="0.500000,-0.866025 0.866026,-0.500000 0.000000,0.000000"/>
+                    <polygon points="0.866026,-0.500000 1.000000,0.000000 0.000000,0.000000"/>
+                </svg>
+                <figcaption>Fan</figcaption>
+            </figure>
+            <figure>
+                <svg id="fig_strip" xmlns="http://www.w3.org/2000/svg" viewBox="-1.01 -1.01 2.02 2.02">
+                    <polygon points="1.000000,0.000000 0.866026,-0.500000 0.866025,0.500000"/>
+                    <polygon points="0.866026,-0.500000 0.866025,0.500000 0.500000,-0.866025"/>
+                    <polygon points="0.866025,0.500000 0.500000,-0.866025 0.500000,0.866025"/>
+                    <polygon points="0.500000,-0.866025 0.500000,0.866025 0.000000,-1.000000"/>
+                    <polygon points="0.500000,0.866025 0.000000,-1.000000 -0.000000,1.000000"/>
+                    <polygon points="0.000000,-1.000000 -0.000000,1.000000 -0.500000,-0.866025"/>
+                    <polygon points="-0.000000,1.000000 -0.500000,-0.866025 -0.500000,0.866025"/>
+                    <polygon points="-0.500000,-0.866025 -0.500000,0.866025 -0.866025,-0.500000"/>
+                    <polygon points="-0.500000,0.866025 -0.866025,-0.500000 -0.866026,0.500000"/>
+                    <polygon points="-0.866025,-0.500000 -0.866026,0.500000 -1.000000,-0.000000"/>
+                </svg>   
+                <figcaption>Strip</figcaption>
+            </figure>
+            <figure>
+                <svg id="fig_quad_fan" xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 2 2">
+                    <polygon points="1.000000,0.000000 -0.000000,1.000000 -1.000000,-0.000000"/>
+                    <polygon points="-1.000000,-0.000000 0.000000,-1.000000 1.000000,0.000000"/>
+                    <polygon points="0.866025,0.500000 0.500000,0.866025 1.000000,0.000000"/>
+                    <polygon points="0.500000,0.866025 -0.000000,1.000000 1.000000,0.000000"/>
+                    <polygon points="-0.500000,0.866025 -0.866026,0.500000 -0.000000,1.000000"/>
+                    <polygon points="-0.866026,0.500000 -1.000000,-0.000000 -0.000000,1.000000"/>
+                    <polygon points="-0.866025,-0.500000 -0.500000,-0.866025 -1.000000,-0.000000"/>
+                    <polygon points="-0.500000,-0.866025 0.000000,-1.000000 -1.000000,-0.000000"/>
+                    <polygon points="0.500000,-0.866025 0.866026,-0.500000 0.000000,-1.000000"/>
+                    <polygon points="0.866026,-0.500000 1.000000,0.000000 0.000000,-1.000000"/>
+                </svg>                    
+                <figcaption>Quad Fan</figcaption>
+            </figure>
+            <figure>
+                <svg id="fig_max_area" xmlns="http://www.w3.org/2000/svg" viewBox="-1.01 -1.01 2.02 2.02">
+                    <polygon points="1.000000,0.000000 -0.500000,0.866025 -0.500000,-0.866025"/>
+                    <polygon points="1.000000,0.000000 0.500000,0.866025 -0.500000,0.866025"/>
+                    <polygon points="-0.500000,0.866025 -1.000000,-0.000000 -0.500000,-0.866025"/>
+                    <polygon points="-0.500000,-0.866025 0.500000,-0.866025 1.000000,0.000000"/>
+                    <polygon points="1.000000,0.000000 0.866025,0.500000 0.500000,0.866025"/>
+                    <polygon points="0.500000,0.866025 -0.000000,1.000000 -0.500000,0.866025"/>
+                    <polygon points="-0.500000,0.866025 -0.866026,0.500000 -1.000000,-0.000000"/>
+                    <polygon points="-1.000000,-0.000000 -0.866025,-0.500000 -0.500000,-0.866025"/>
+                    <polygon points="-0.500000,-0.866025 0.000000,-1.000000 0.500000,-0.866025"/>
+                    <polygon points="0.500000,-0.866025 0.866026,-0.500000 1.000000,0.000000"/>
+                </svg>   
+                <figcaption>Max Area</figcaption>
+            </figure>
+        </div>
+
+        <p>
+            From prior work<sup><a href="#ref.triangulation">[1]</a></sup> the triangulation method that should perform the best is the "Max Area" method. This is due to small thin triangles being very inefficient for the rasterizer.
+
+            And, it's also pretty obvious from just looking at how the circles triangulate, that the Max Area is the only one where as you add more triangles, it doesn't seem to really change much.
+            This is because as the triangles get very thin, they also get smaller.
+
+            <!--Having triangles that get smaller and smaller, means that there is a smaller and smaller chance that the triangle will even hit a pixel, causing it to completely skip rasterization; but for long thin triangles, they still have a good chance of hitting a pixel. With long and thin triangles you have more triangles contributing less pixels, and with non-uniform triangles you have less triangles contributing more pixels.-->
+        </p>
+            
+        <p>
+            Another thing to note is that triangles are not rasterized into pixels, but rather groups of pixels (at least 2x2). So having long thin triangles create greater edge perimeter; more edge perimeter means more opportunity for wasted processing during shading, as I attempt to depict below.
+        </p>
+
+        <figure id="figure5">
+            <div class="subfigure">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.1 -0.1 8.2 4.2" style="width:200px;">
+                    
+                    <line x1="0" y1="1" x2="8" y2="1" class="grid"/>
+                    <line x1="0" y1="3" x2="8" y2="3" class="grid"/>
+                    <line x1="1" y1="0" x2="1" y2="4" class="grid"/>
+                    <line x1="3" y1="0" x2="3" y2="4" class="grid"/>
+                    <line x1="5" y1="0" x2="5" y2="4" class="grid"/>
+                    <line x1="7" y1="0" x2="7" y2="4" class="grid"/>
+
+                    <line x1="0" y1="0" x2="8" y2="0" class="grid"/>
+                    <line x1="0" y1="2" x2="8" y2="2" class="grid"/>
+                    <line x1="0" y1="4" x2="8" y2="4" class="grid"/>
+                    <line x1="0" y1="0" x2="0" y2="4" class="grid"/>
+                    <line x1="2" y1="0" x2="2" y2="4" class="grid"/>
+                    <line x1="4" y1="0" x2="4" y2="4" class="grid"/>
+                    <line x1="6" y1="0" x2="6" y2="4" class="grid"/>
+                    <line x1="8" y1="0" x2="8" y2="4" class="grid"/>
+
+                    <rect x="0" y="2" width="2" height="2" class="quad"/>
+                    <rect x="2" y="2" width="2" height="2" class="quad"/>
+
+                    <circle cx="0.5" cy="0.5" class="sample"/>
+                    <circle cx="0.5" cy="1.5" class="sample"/>
+                    <circle cx="0.5" cy="2.5" class="sample"/>
+                    <circle cx="0.5" cy="3.5" class="sample"/>
+
+                    <circle cx="1.5" cy="0.5" class="sample"/>
+                    <circle cx="1.5" cy="1.5" class="sample"/>
+                    <circle cx="1.5" cy="2.5" class="sample"/>
+                    <circle cx="1.5" cy="3.5" class="sample"/>
+
+                    <circle cx="2.5" cy="0.5" class="sample"/>
+                    <circle cx="2.5" cy="1.5" class="sample"/>
+                    <circle cx="2.5" cy="2.5" class="sample"/>
+                    <circle cx="2.5" cy="3.5" class="sample"/>
+
+                    <circle cx="3.5" cy="0.5" class="sample"/>
+                    <circle cx="3.5" cy="1.5" class="sample"/>
+                    <circle cx="3.5" cy="2.5" class="sample"/>
+                    <circle cx="3.5" cy="3.5" class="sample"/>
+
+                    <circle cx="4.5" cy="0.5" class="sample"/>
+                    <circle cx="4.5" cy="1.5" class="sample"/>
+                    <circle cx="4.5" cy="2.5" class="sample"/>
+                    <circle cx="4.5" cy="3.5" class="sample"/>
+
+                    <circle cx="5.5" cy="0.5" class="sample"/>
+                    <circle cx="5.5" cy="1.5" class="sample"/>
+                    <circle cx="5.5" cy="2.5" class="sample"/>
+                    <circle cx="5.5" cy="3.5" class="sample"/>
+
+                    <circle cx="6.5" cy="0.5" class="sample"/>
+                    <circle cx="6.5" cy="1.5" class="sample"/>
+                    <circle cx="6.5" cy="2.5" class="sample"/>
+                    <circle cx="6.5" cy="3.5" class="sample"/>
+
+                    <circle cx="7.5" cy="0.5" class="sample"/>
+                    <circle cx="7.5" cy="1.5" class="sample"/>
+                    <circle cx="7.5" cy="2.5" class="sample"/>
+                    <circle cx="7.5" cy="3.5" class="sample"/>
+
+                    <rect x="0.2" y="2.2" width="0.6" height="0.6" class="miss"/>
+                    <rect x="1.2" y="2.2" width="0.6" height="0.6" class="hit"/>
+                    <rect x="2.2" y="2.2" width="0.6" height="0.6" class="hit"/>
+                    <rect x="3.2" y="2.2" width="0.6" height="0.6" class="miss"/>
+                    <rect x="0.2" y="3.2" width="0.6" height="0.6" class="miss"/>
+                    <rect x="1.2" y="3.2" width="0.6" height="0.6" class="miss"/>
+                    <rect x="2.2" y="3.2" width="0.6" height="0.6" class="miss"/>
+                    <rect x="3.2" y="3.2" width="0.6" height="0.6" class="miss"/>
+
+                    <polygon points="0.3,1.6 7.6,2.1, 0.6,2.7" class="triangle"/>
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.1 -0.1 8.2 4.2" style="width:200px;">
+                    
+                    <line x1="0" y1="1" x2="8" y2="1" class="grid"/>
+                    <line x1="0" y1="3" x2="8" y2="3" class="grid"/>
+                    <line x1="1" y1="0" x2="1" y2="4" class="grid"/>
+                    <line x1="3" y1="0" x2="3" y2="4" class="grid"/>
+                    <line x1="5" y1="0" x2="5" y2="4" class="grid"/>
+                    <line x1="7" y1="0" x2="7" y2="4" class="grid"/>
+
+                    <line x1="0" y1="0" x2="8" y2="0" class="grid"/>
+                    <line x1="0" y1="2" x2="8" y2="2" class="grid"/>
+                    <line x1="0" y1="4" x2="8" y2="4" class="grid"/>
+                    <line x1="0" y1="0" x2="0" y2="4" class="grid"/>
+                    <line x1="2" y1="0" x2="2" y2="4" class="grid"/>
+                    <line x1="4" y1="0" x2="4" y2="4" class="grid"/>
+                    <line x1="6" y1="0" x2="6" y2="4" class="grid"/>
+                    <line x1="8" y1="0" x2="8" y2="4" class="grid"/>
+
+                    <rect x="4" y="2" width="2" height="2"/>
+
+                    <circle cx="0.5" cy="0.5" class="sample"/>
+                    <circle cx="0.5" cy="1.5" class="sample"/>
+                    <circle cx="0.5" cy="2.5" class="sample"/>
+                    <circle cx="0.5" cy="3.5" class="sample"/>
+
+                    <circle cx="1.5" cy="0.5" class="sample"/>
+                    <circle cx="1.5" cy="1.5" class="sample"/>
+                    <circle cx="1.5" cy="2.5" class="sample"/>
+                    <circle cx="1.5" cy="3.5" class="sample"/>
+
+                    <circle cx="2.5" cy="0.5" class="sample"/>
+                    <circle cx="2.5" cy="1.5" class="sample"/>
+                    <circle cx="2.5" cy="2.5" class="sample"/>
+                    <circle cx="2.5" cy="3.5" class="sample"/>
+
+                    <circle cx="3.5" cy="0.5" class="sample"/>
+                    <circle cx="3.5" cy="1.5" class="sample"/>
+                    <circle cx="3.5" cy="2.5" class="sample"/>
+                    <circle cx="3.5" cy="3.5" class="sample"/>
+
+                    <circle cx="4.5" cy="0.5" class="sample"/>
+                    <circle cx="4.5" cy="1.5" class="sample"/>
+                    <circle cx="4.5" cy="2.5" class="sample"/>
+                    <circle cx="4.5" cy="3.5" class="sample"/>
+
+                    <circle cx="5.5" cy="0.5" class="sample"/>
+                    <circle cx="5.5" cy="1.5" class="sample"/>
+                    <circle cx="5.5" cy="2.5" class="sample"/>
+                    <circle cx="5.5" cy="3.5" class="sample"/>
+
+                    <circle cx="6.5" cy="0.5" class="sample"/>
+                    <circle cx="6.5" cy="1.5" class="sample"/>
+                    <circle cx="6.5" cy="2.5" class="sample"/>
+                    <circle cx="6.5" cy="3.5" class="sample"/>
+
+                    <circle cx="7.5" cy="0.5" class="sample"/>
+                    <circle cx="7.5" cy="1.5" class="sample"/>
+                    <circle cx="7.5" cy="2.5" class="sample"/>
+                    <circle cx="7.5" cy="3.5" class="sample"/>
+
+                    <rect x="4.2" y="2.2" width="0.6" height="0.6" class="miss"/>
+                    <rect x="5.2" y="2.2" width="0.6" height="0.6" class="hit"/>
+                    <rect x="4.2" y="3.2" width="0.6" height="0.6" class="miss"/>
+                    <rect x="5.2" y="3.2" width="0.6" height="0.6" class="miss"/>
+
+                    <polygon points="4.6,2.6 5.6,2.1, 5.6,2.7" class="triangle"/>
+                </svg>
+            </div>
+            <figcaption>
+                Both long thin triangles (left) and small triangles (right) are bad for shading. Blue squares show useful processing and red squares show wasted processing.
+            </figcaption>
+        </figure>
+        
+        <h2>How's the performance?</h2>
+
+        <p>
+            To test how each triangulation method performs, I created a test program using Vulkan that renders circles for each of the different methods and measures how long each draw call takes in milliseconds. I also inverted the measurements to see if I could replicate the results from "Triangulation"<sup><a href="#ref.triangulation">[1]</a></sup>, therefore the units in the Y axis being displayed is (1 / draw time ms) = draw calls per millisecond, so it isn't really framerate that is being displayed, rather the number of draw calls you could expect to execute per millisecond. For the following charts, I tested on my RTX 3070 with a fixed clock speed.
+        </p>
+
+        <figure id="figure3">
+            <canvas id="figure3_plot"></canvas>
+            <figcaption>
+                Draw calls per millisecond by vertex count, rendering a single circle at 512x512 pixel resolution.
+            </figcaption>
+        </figure>
+
+        <figure id="figure4">
+            <canvas id="figure4_plot"></canvas>
+            <figcaption>
+                Draw calls per millisecond by vertex count <u>with MSAA 4x</u>, rendering a single circle at 512x512 pixel resolution.
+            </figcaption>
+        </figure>
+
+        <p>
+            Something that I found very interesting from the results was how well the Strip method holds up at really high triangle counts. I theorize that there must be some kind of benefit to triangles that have one side that is axis aligned, because Strip is the only method where <em>every</em> triangle is vertically aligned along at least one edge.
+        </p>
+
+        <h2>Single circle is so boring</h2>
+
+        <p>
+            who is going to be drawing a circle with 10000+ vertices? seems a bit far fetched, maybe a better test would be to draw many circles at a reduced level of detail.
+        </p>
+
+        <h2>Unleash the Pixel Shader!</h2>
+
+        <p>
+            You might be thinking, wait.. why are we spending so much time on rasterizing triangles, when we can just do the rasterization ourselfs with a pixel shader?
+        </p>
+
+        <h2>Conclusion</h2>
+
+        <p>
+            Final takaway is.. if you are going to be drawing circles, use a pixel shader! But if you must triangulate, then stay away from unaligned large thin triangles! Also, if you plan to take any measurements for yourself, be sure to lock your GPU clocks to get more consistant and reproducable results.
+        </p>
+
+        <p>
+            Happy GPU programming!
+        </p>
+
+        <h2>Resources</h2>
+
+        <p>
+            <a href="./triangulate_circle.h" target="_blank">triangulate_circle.h</a>
+            <br>
+            Source code for the triangulation methods. (Yes, this is a header-only C library, I just can't help myself!)
+        </p>
+        <p>
+            <a href="https://github.com/lazergenixdev/tinyvk/blob/81a68276d22e9056c8d86014d679b27a36a6606e/examples/draw_circles/main.c" target="_blank">draw_circles/main.c</a>
+            <br>
+            Source code for program used to collect performance data.
+        </p>
+
+        <h2>References</h2>
+            
+        <div id="ref.triangulation">
+            [1] <a href="https://www.humus.name/index.php?page=News&ID=228" target="_blank">Triangulation</a> by Emil Persson.
+        </div>
+        <div id="ref.fission">
+            [2] <a href="https://github.com/lazergenixdev/Fission" target="_blank">Fission</a> by Me!
+        </div>
+        <div id="ref.fullscreen">
+            [3] <a href="https://30fps.net/pages/twotris/" target="_blank">Full screen triangle optimization</a> by Pekka Väänänen
+        </div>
+        <div id="ref.atlassian">
+            [4] <a href="https://www.atlassian.com/blog/atlassian-engineering/gpu-rendering-shapes-and-connectors-in-confluence-whiteboards" target="_blank">Triangles at work: GPU rendering shapes and connectors in Confluence whiteboards</a> by Caleb Joseph and Tim Hor.
+        </div>
+    </article>
+
+    <footer>
+        <p>
+            Thanks for reading!
+            <a href="mailto:contact@lazergenix.dev">contact@lazergenix.dev</a>.
+        </p>
+        <p>
+            <a href="/#blog">#blog</a>
+        </p>
+    </footer>
+    
+
+    <script src="/data/3rdparty/chart.js"></script>
+    <script>
+        const CHARTS = [];
+        const CHART_OPTIONS = {
+            scales: {
+                y: {
+                    grid: { color: undefined },
+                    ticks: { color: undefined },
+                    border: { color: undefined },
+                    beginAtZero: true
+                },
+                x: {
+                    grid: { color: "transparent" },
+                    ticks: { color: undefined },
+                    border: { color: undefined },
+                },
+            },
+            plugins: {
+                legend: {
+                    labels: { color: undefined },
+                }
+            }
+        };
+
+        CHARTS.push(new Chart(figure3_plot, {
+            type: 'bar',
+            data: {
+                labels: [48,96,192,384,768,1536,3072,6144,12288,24576,49152,98304,196608],
+                datasets: [
+                    { data: [205.338809,185.013876,155.5209953,126.984127,99.15716411,66.02839221,35.56820203,18.40095685,9.425514869,4.741583689,2.380753985,1.194450583,0.5925013035], label: 'Naive' },
+                    { data: [217.8649237,191.0219675,164.0689089,133.0671989,109.1703057,70.2247191,39.0854016,20.81382038,10.72501073,5.433306167,2.736015541,1.372438686,0.6851379868], label: 'Fan' },
+                    { data: [212.3142251,186.9158879,154.9186677,126.5022138,82.40626288,54.17118093,53.29070077,51.26890541,48.33252779,42.2743606,34.34065934,43.71584699,23.93489708], label: 'Strip' },
+                    { data: [223.7136465,199.4017946,185.528757,160.3849238,138.8888889,84.10428932,46.9924812,25.58526289,13.25381047,6.648715136,3.3316675,1.673836265,0.8333090285], label: 'Quad Fan' },
+                    { data: [234.4665885,231.4814815,228.050171,216.9197397,221.2389381,215.7497303,197.2386588,174.6724891,144.3001443,102.6694045,69.56521739,47.4608448,25.88996764], label: 'Max Area' },
+                ]
+            },
+            options: CHART_OPTIONS,
+        }));
+
+        CHARTS.push(new Chart(figure4_plot, {
+            type: 'bar',
+            data: {
+                labels: [48,96,192,384,768,1536,3072,6144,12288,24576,49152,98304,196608],
+                datasets: [
+                    { data: [139.3728223,106.4962726,76.65772327,57.55395683,44.94382022,34.1588386,20.95557418,10.92418615,5.564056197,2.813137351,1.39796596,0.7331888951,0.3563760123], label: 'Naive' },
+                    { data: [155.159038,118.3431953,84.49514153,62.01550388,47.67580453,35.75259206,26.10966057,14.97902936,7.743234349,3.892262183,1.944069131,0.9906728154,0.4673126485], label: 'Fan' },
+                    { data: [152.9051988,115.942029,83.09098463,56.27462015,41.05933073,29.32981376,21.01061036,14.84891232,14.2551675,13.70426203,13.6286201,14.27347987,13.7997654], label: 'Strip' },
+                    { data: [159.1089897,132.5381047,107.8748652,89.68609865,72.02016565,49.46821667,27.87068004,15.01050736,7.835148476,4.00104027,2.0155195,1.014661864,0.5061048902], label: 'Quad Fan' },
+                    { data: [185.013876,173.6111111,172.4137931,168.4919966,167.0843776,166.6666667,157.6044129,146.8428781,134.4989913,130.3780965,82.30452675,47.77830865,26.2295082], label: 'Max Area' },
+                ]
+            },
+            options: CHART_OPTIONS,
+        }));
+    </script>
+    <script type="module">
+        'use strict';
+        const __svg__ = "http://www.w3.org/2000/svg";
+
+        figure1_wireframe.addEventListener('change', (e) => {
+            const svgs = document.querySelectorAll("#figure1 svg");
+            if (e.target.checked == true)
+                svgs.forEach((e) => {e.style.fill = "none"});
+            else
+                svgs.forEach((e) => {e.style.fill = "currentColor"});
+        });
+
+        WebAssembly.instantiateStreaming(fetch("tric.wasm"), {
+            env: {
+                sin: Math.sin,
+                cos: Math.cos
+            }
+        }).then(async (wasm) => {
+            const c = wasm.instance.exports;
+            const memory = wasm.instance.exports.memory;
+
+            c.init();
+
+            const generate_svg = (svg, method, lod) => {
+                c.generate(method, lod);
+
+                const vb = new Float32Array(memory.buffer, c.vertex_buffer_data(), c.vertex_buffer_size()/Float32Array.BYTES_PER_ELEMENT);
+                const ib = new Uint32Array(memory.buffer, c.index_buffer_data(), c.index_buffer_size()/Uint32Array.BYTES_PER_ELEMENT);
+                
+                const triangles = [];
+                const n = ib.length / 3;
+                for (let i = 0; i < n; ++i) {
+                    const i0 = ib[i*3 + 0];
+                    const i1 = ib[i*3 + 1];
+                    const i2 = ib[i*3 + 2];
+                    const x0 = vb[i0*2 + 0];
+                    const y0 = vb[i0*2 + 1];
+                    const x1 = vb[i1*2 + 0];
+                    const y1 = vb[i1*2 + 1];
+                    const x2 = vb[i2*2 + 0];
+                    const y2 = vb[i2*2 + 1];
+                    const triangle = document.createElementNS(__svg__, "polygon");
+                    triangle.setAttribute("points", `${x0},${y0} ${x1},${y1} ${x2},${y2}`);
+                    triangles.push(triangle);
+                }
+                svg.replaceChildren(...triangles);
+            };
+
+            figure1_lod.value = 2;
+            figure1_lod.addEventListener('input', (e) => {
+                const lod = e.target.value.toString();
+                generate_svg(fig_naive, 0, lod);
+                generate_svg(fig_fan, 1, lod);
+                generate_svg(fig_strip, 2, lod);
+                generate_svg(fig_max_area, 3, lod);
+                generate_svg(fig_quad_fan, 4, lod);
+            });
+        });
+    </script>
+    <script>
+        const theme = {
+            dark: 1,
+            light: 2,
+        };
+        let themeOverride;
+        const auto = document.getElementById("auto-light-dark");
+        const themeToggle = document.getElementById("mode-toggle");
+
+        function setChartTheme(value) {
+            CHARTS.forEach(chart => {
+                if (value == theme.dark) {
+                    chart.options.scales.y.grid.color = "#222";
+                    chart.options.scales.y.ticks.color = "#aaa";
+                    chart.options.scales.x.ticks.color = "#ccc";
+                    chart.options.scales.x.border.color = "#222";
+                    chart.options.scales.y.border.color = "#222";
+                    chart.options.plugins.legend.labels.color = "#fff";
+                }
+                else {
+                    chart.options.scales.y.grid.color = "#ddd";
+                    chart.options.scales.y.ticks.color = "#555";
+                    chart.options.scales.x.ticks.color = "#333";
+                    chart.options.scales.x.border.color = "#ddd";
+                    chart.options.scales.y.border.color = "#ddd";
+                    chart.options.plugins.legend.labels.color = "#000";
+                }
+                chart.update();
+            });
+        }
+
+        setChartTheme(getTheme());
+
+        {
+            const value = localStorage.getItem("color-theme");
+            if (value) {
+                if (theme[value] != getPreferedTheme()) {
+                    toggleTheme();
+                }
+                auto.disabled = false;
+            }
+        }
+
+        function getPreferedTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? theme.dark : theme.light;
+        }
+
+        function getTheme() {
+            if (themeOverride) {
+                return themeOverride;
+            }
+            return getPreferedTheme();
+        }
+
+        function setTheme(value) {
+            themeOverride = value;
+            if (themeOverride === undefined) {
+                localStorage.removeItem("color-theme");
+                return;
+            }
+            localStorage.setItem("color-theme", value === theme.dark ? "dark" : "light");
+        }
+
+        function toggleTheme() {
+            if (getTheme() == theme.dark) {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                setChartTheme(theme.light);
+                setTheme(theme.light);
+            } else {
+                document.body.classList.remove("light");
+                document.body.classList.add("dark");
+                setChartTheme(theme.dark);
+                setTheme(theme.dark);
+            }
+            auto.disabled = false;
+        }
+
+        // swap sun and moon
+        if (getTheme() == theme.dark) {
+            const slider = document.querySelector(".slider");
+            const sun = slider.children[0];
+            slider.removeChild(slider.children[0]);
+            slider.appendChild(sun);
+        }
+
+        function setAutoThemeSelection() {
+            document.body.classList.remove("light", "dark");
+            if (getTheme() != getPreferedTheme()) {
+                themeToggle.checked = !themeToggle.checked;
+            }
+            setTheme(undefined);
+            auto.disabled = true;
+        }
+    </script>
+</body>
+</html>
