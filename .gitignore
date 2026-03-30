@@ -2,6 +2,8 @@
 
 *.json
 !package.json
+node_modules/
+
 *.min.js
 *.wasm
 *.exe
