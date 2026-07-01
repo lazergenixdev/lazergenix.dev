@@ -15,10 +15,10 @@ resumes :: [] Resume {
     {
         name = "index",
         projects = {
-            { projects.llvm, true },
-            { projects.kai, true },
-            { projects.ooo, true },
             { projects.voxel, true },
+            { projects.kai, true },
+            { projects.llvm, true },
+            { projects.ooo, true },
             { projects.fission, true },
             //{ projects.shirt, true },
             { projects.ytmm, true },
@@ -49,16 +49,13 @@ resumes :: [] Resume {
             { projects.ooo, true },
             { projects.voxel, true },
             { projects.fission, true },
-            //{ projects.shirt, true },
-            { projects.ytmm, true },
             { projects.optix, false },
             { projects.fluid, false },
-            { projects.cloth, false },
         },
         skills = {
             {
                 category = "Programming",
-                items = {"C++", "C", "Python", "x86", "ARM", "CUDA", "MATLAB", "bash", "HTML", "Javascript", "CSS"},
+                items = {"C++", "C", "Python", "x86", "ARM", "CUDA", "MATLAB", "bash"},
             },
             {
                 category = "Programming Tools",

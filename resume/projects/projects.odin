@@ -112,7 +112,7 @@ llvm: Project : {
     lang = {"C++"},
     desc = {
         "Successfully modified LLVM RISC-V backend to generate code for a new experimental branching technique.",
-        "Learned how to effectively apply LLVM tools and test programs to debug a variaty of compiler issues.",
+        "Learned how to effectively apply LLVM tools and test programs to debug a variety of compiler issues.",
     },
 }
 
