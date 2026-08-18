@@ -450,7 +450,6 @@
 			<button>Blog</button>
 			<button>Home</button>
 			<button>Projects</button>
-			<button>Games</button>
 		</nav>
 	</header>
 
@@ -663,15 +662,11 @@
 			</div>
 		</div>
 	</section>
-	<section class="page games">
-		<p>Games that are packed into a single HTML file! (WIP)</p>
-		<a href="/games/snake/">snake</a><span class="subtle"> (21 KB)</span>
-	</section>
 
 	<script type="module">
 		const buttons = document.querySelectorAll("nav button");
 		const pages = document.querySelectorAll('.page');
-		const page_names = ["about", "blog", "home", "projects", "games"];
+		const page_names = ["about", "blog", "home", "projects"];
 
 		buttons.forEach((btn, index) => {
 			btn.addEventListener("click", (event) => {
